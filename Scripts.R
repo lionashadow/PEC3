@@ -24,4 +24,18 @@ colnames(column_2C) <- colnames(column_3C)
 column_2C<-rename(column_2C, "2C_Class" = "class")
 column_3C<-rename(column_3C, "3C_Class" = "class")
 ortho_df <- merge(column_2C, column_3C, by = c("pelvic_incidence", "pelvic_tilt", "lumbar_lordosis_angle", "sacral_slope", "pelvic_radius", "degree_spondylolisthesis"))
+ortho_df <- ortho_df %>% mutate("2C_Class" = factor(ortho_df$`2C_Class`, levels = c("Normal", "Abnormal")))
+ortho_df <- ortho_df %>% mutate("3C_Class" = factor(ortho_df$`3C_Class`, levels = c("Normal", "Hernia", "Spondylolisthesis")))
+
+summary(ortho_df)
+summary(sapply(ortho_df,is.na))
+
+ortho_df %>% select(-c(`2C_Class`, `3C_Class`)) %>% pairs()
+model.matrix(~0+., ortho_df) %>%cor() %>% ggcorrplot(lab=T, lab_size=2.5,type = "lower")
+
+ortho_df2 <- ortho_df %>% pivot_longer(cols = c(pelvic_incidence, pelvic_tilt, pelvic_radius, sacral_slope, lumbar_lordosis_angle), names_to = "type_of_measure", values_to = "angles")
+ortho_df2 <- ortho_df2 %>% select(type_of_measure, angles, everything())
+ortho_df2 %>% ggplot(aes(angles, fill = type_of_measure)) + geom_density(alpha = 0.2)
+
+
 
