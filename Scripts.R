@@ -32,10 +32,18 @@ summary(sapply(ortho_df,is.na))
 
 ortho_df %>% select(-c(`2C_Class`, `3C_Class`)) %>% pairs()
 model.matrix(~0+., ortho_df) %>%cor() %>% ggcorrplot(lab=T, lab_size=2.5,type = "lower")
+# Visualization part
 
 ortho_df2 <- ortho_df %>% pivot_longer(cols = c(pelvic_incidence, pelvic_tilt, pelvic_radius, sacral_slope, lumbar_lordosis_angle), names_to = "type_of_measure", values_to = "angles")
 ortho_df2 <- ortho_df2 %>% select(type_of_measure, angles, everything())
-ortho_df2 %>% ggplot(aes(angles, fill = type_of_measure)) + geom_density(alpha = 0.2)
+ortho_df2 %>% ggplot(aes(angles, fill = type_of_measure)) + geom_density(alpha = 0.2)+ facet_grid(~`2C_Class`)
+ortho_df2 %>% ggplot(aes(angles, fill = type_of_measure)) + geom_density(alpha = 0.2)+ facet_grid(~`3C_Class`)
+ortho_df2 %>% ggplot(aes(y= angles, color = type_of_measure)) + geom_boxplot() + facet_grid(~`2C_Class`)
+ortho_df2 %>% ggplot(aes(y= angles, color = type_of_measure)) + geom_boxplot() + facet_grid(~`3C_Class`)
+ortho_df2 %>% ggplot(aes(x= angles,y = degree_spondylolisthesis,  color = type_of_measure)) + geom_point() + facet_grid(~`2C_Class`)
+ortho_df2 %>% ggplot(aes(x= angles,y = degree_spondylolisthesis,  color = type_of_measure)) + geom_point() + facet_grid(~`3C_Class`)
 
-
-
+# Normality test
+ortho_df %>% select(where(is.numeric))%>% colnames() %>%
+  set_names() %>%  map(~ ks.test(ortho_df[,.x], "pbinom")) %>%
+  map_dfr(., tidy, .id = "parameter")
