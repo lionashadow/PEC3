@@ -5,6 +5,8 @@ library(ggpubr)
 library(dplyr)
 library(tidyverse)
 
+
+
 column_2C <- read_csv("archive/column_2C_weka.csv", 
                     col_types = cols(pelvic_incidence = col_number(), 
                                            `pelvic_tilt numeric` = col_number(), 

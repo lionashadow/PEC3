@@ -1,0 +1,53 @@
+---
+title: "PEC3"
+author: "Yury Postnikov"
+date: "12/22/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(MASS)
+library(ggcorrplot)
+library(ggplot2)
+library(ggpubr)
+library(dplyr)
+library(tidyverse)
+```
+
+# Ejercicio 1 Buscar un conjunto de datos relacionados con la Bioestadística o la Bioinformática.
+
+```{r }
+
+```
+
+
+```{r }
+
+```
+
+
+```{r }
+
+```
+
+
+```{r }
+
+```
+
+
+```{r }
+
+```
+
+
+```{r }
+
+```
+
+
+```{r }
+
+```
+
