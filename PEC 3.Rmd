@@ -11,11 +11,33 @@ library(MASS)
 library(ggcorrplot)
 library(ggplot2)
 library(ggpubr)
-library(dplyr)
 library(tidyverse)
 ```
 
 # Ejercicio 1 Buscar un conjunto de datos relacionados con la Bioestadística o la Bioinformática.
+
+Para nuestro trabajo hemos elegido la base de datos pública, que hemos encontrado en el sitio web kaggle.com:
+
+https://www.kaggle.com/uciml/biomechanical-features-of-orthopedic-patients
+
+Esta dataset tiene 2 archivos .csv (column_2C_weka y column_3C_weka), que se puede juntar y valorar conjuntamente:
+Es una base de datos que contiene informacaión sobre 310 personas, en las que evaluaron posición de vertebras de la columna lumbar utilizando varios parametros (tabla 1) y exolicación visual con la imagen del articulo^1. Dentro de esta muestra habia 100 personas que consideramos "sanos" o "normales" y 210 ("anormales") que consideramos que tenian algun tipo de patología: "hernia" o "spondilolistesis". 
+tabla 1:
+Variable|Expicación del variable
+-|-
+pelvic_ _incidence | 
+pelvic_tilt | 
+lumbar_lordosis_angle |  
+sacral_sclope | 
+pelvic_radius | 
+degree_spondylolysthesis | 
+class | 
+class_2c | 
+class_3c | 
+
+Las bibliografía:
+  1. Sergides IG, McCombe PF, White G, Mokhtar S, Sears WR. Lumbo-pelvic lordosis and the pelvic radius technique in the assessment of spinal sagittal balance: strengths and caveats. Eur Spine J. 2011;20 Suppl 5(Suppl 5):591-601. doi:10.1007/s00586-011-1926-z
+  2. https://www.orthobullets.com/spine/2071/lumbar-spine-anatomy  para la fecha de 25.12.2021
 
 ```{r }
 
