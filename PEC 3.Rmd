@@ -22,21 +22,32 @@ https://www.kaggle.com/uciml/biomechanical-features-of-orthopedic-patients
 
 Esta dataset tiene 2 archivos .csv (column_2C_weka y column_3C_weka), que se puede juntar y valorar conjuntamente:
 Es una base de datos que contiene informacaión sobre 310 personas, en las que evaluaron posición de vertebras de la columna lumbar utilizando varios parametros (tabla 1) y exolicación visual con la imagen del articulo^1. Dentro de esta muestra habia 100 personas que consideramos "sanos" o "normales" y 210 ("anormales") que consideramos que tenian algun tipo de patología: "hernia" o "spondilolistesis". 
+
+
+
 tabla 1:
+
 Variable|Expicación del variable
 -|-
-pelvic_ _incidence | 
-pelvic_tilt | 
-lumbar_lordosis_angle |  
-sacral_sclope | 
-pelvic_radius | 
-degree_spondylolysthesis | 
+pelvic_incidence | Angulo entre la línea que pasa del centro de la lámina terminal del S1 al centro de las cabezas femorales, y la línea perpendicula a la lámina terminal de S1
+pelvic_tilt | Angulo entre la línea que pasa del centro de la lámina terminal del S1 al centro de las cabezas femorales y una línea vertical
+lumbar_lordosis_angle |  angulo entre la lámina terminal superior del L1 y S1
+sacral_sclope | angulo entre la línea perpendicula a la lámina terminal de S1 y una línea horizontal
+pelvic_radius | Es un angulo entre la línea vertical y una línea del centro de las cabezas femorales hasta el borde posterior de la lámina terminal de S1
+degree_spondylolysthesis | distancia de desplazamiento de la vertebrq superior sobre la vertebra inferior (positivo - anterior y negativo - posterior)
 class | 
-class_2c | 
-class_3c | 
+class_2c | Classificación de data como "normal" y "anoraml"
+class_3c | Classificación de data como "normal", "Hernia" y "spondilolistesis"
+
+
+
+En esta imagen presentaremos la visualización de lo angulos medidas en la base de datos.
+![Lumbar_angles](/Users/lionashadow/OneDrive/UOC/Software para analisys de data/PEC 3/PEC3/Image_example_angles.png)
 
 Las bibliografía:
+
   1. Sergides IG, McCombe PF, White G, Mokhtar S, Sears WR. Lumbo-pelvic lordosis and the pelvic radius technique in the assessment of spinal sagittal balance: strengths and caveats. Eur Spine J. 2011;20 Suppl 5(Suppl 5):591-601. doi:10.1007/s00586-011-1926-z
+  
   2. https://www.orthobullets.com/spine/2071/lumbar-spine-anatomy  para la fecha de 25.12.2021
 
 ```{r }
