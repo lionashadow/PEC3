@@ -1,10 +1,10 @@
 library(MASS)
-library(ggcorrplot)
 library(ggplot2)
+library(ggcorrplot)
 library(ggpubr)
 library(dplyr)
 library(tidyverse)
-
+library(broom)
 
 
 column_2C <- read_csv("archive/column_2C_weka.csv", 
@@ -21,7 +21,11 @@ column_3C <- read_csv("archive/column_3C_weka.csv",
 
 colnames(column_2C) <- colnames(column_3C)
 
-colnames(column_2C) <- colnames(column_3C)
+column_2C2<-rename(column_2C, "class" = "class_2")
+column_3C2<-rename(column_3C, "class" = "class_3")
+colnames(column_2C2) %>% 
+  set_names() %>% 
+  map(~(column_2C2[,.x]==column_3C2[,.x])) %>% as.data.frame() %>% summary()
 
 column_2C<-rename(column_2C, "class_2" = "class")
 column_3C<-rename(column_3C, "class_3" = "class")
@@ -42,7 +46,6 @@ model.matrix(~0. + pelvic_incidence+pelvic_tilt+pelvic_radius+sacral_slope+lumba
 
 # Visualization part
 
-
 ortho_df2 %>% ggplot(aes(angles, fill = type_of_measure)) + geom_density(alpha = 0.2)+ facet_grid(~class_2)
 ortho_df2 %>% ggplot(aes(angles, fill = type_of_measure)) + geom_density(alpha = 0.2)+ facet_grid(~class_3)
 ortho_df2 %>% ggplot(aes(y= angles, color = type_of_measure)) + geom_boxplot() + facet_grid(~class_2)
@@ -57,17 +60,20 @@ ortho_df2 %>% ggplot(aes(x =class_3, y= degree_spondylolisthesis, color = type_o
 
 ortho_df %>% select(where(is.numeric))%>% colnames() %>%
   set_names() %>%  map(~ ks.test(ortho_df[,.x], "pnorm")) %>%
-  map_dfr(., tidy, .id = "parameter")
+  map_dfr(., tidy, .id = "variable")
 ks.test(ortho_df2$degree_spondylolisthesis[ortho_df2$class_3== "Hernia"], "pnorm")
 ## Shapiro
 
 ortho_df %>% select(where(is.numeric))%>% colnames() %>%
   set_names() %>%  map(~ shapiro.test(ortho_df[,.x])) %>%
-  map_dfr(., tidy, .id = "parameter")
+  map_dfr(., tidy, .id = "variable")
 shapiro.test(ortho_df2$degree_spondylolisthesis[ortho_df2$class_3== "Hernia"])
 ## QQplot
 gqqplot(ortho_df2, "angles", facet.by = "class_3", color = "type_of_measure")
 ggqqplot(ortho_df2, "angles", facet.by = "class_2", color = "type_of_measure")
 ggqqplot(ortho_df2, "degree_spondylolisthesis", color = "class_3", facet.by  = "class_2")
+
+
+
 
 

@@ -14,11 +14,16 @@ library(ggpubr)
 library(tidyverse)
 ```
 
-# Ejercicio 1 Buscar un conjunto de datos relacionados con la Bioestadística o la Bioinformática.
+# Ejercicio 1 
+- Buscar un conjunto de datos relacionados con la Bioestadística o la Bioinformática. Posibles recursos bibliográficos son aquellos presentados en la PEC1, por ejemplo: http://www.bioinformatics.org/sms2/index.html; o bien http://biostat.mc.vanderbilt.edu/wiki/Main/DataSets. También es posible utilizar fuentes propias o de interés, siempre teniendo en cuenta que sean datos públicos para los usuarios. Será necesario especificar la procedencia y la justificación de la elección de los datos.
 
 Para nuestro trabajo hemos elegido la base de datos pública, que hemos encontrado en el sitio web kaggle.com:
 
 https://www.kaggle.com/uciml/biomechanical-features-of-orthopedic-patients
+
+
+# Ejercicio 2
+- Utilizando R, mostrar y explicar qué tipo de ficheros se han importado, las variables de estudio (tipo, clasificación, ...), así como todo aquello relevante para el estudio. Incluir capturas de pantalla y las instrucciones en R utilizadas para importar y mostrar los datos.
 
 Esta dataset tiene 2 archivos .csv (column_2C_weka y column_3C_weka), que se puede juntar y valorar conjuntamente:
 Es una base de datos que contiene informacaión sobre 310 personas, en las que evaluaron posición de vertebras de la columna lumbar utilizando varios parametros (tabla 1) y exolicación visual con la imagen del articulo^1. Dentro de esta muestra habia 100 personas que consideramos "sanos" o "normales" y 210 ("anormales") que consideramos que tenian algun tipo de patología: "hernia" o "spondilolistesis". 
@@ -29,16 +34,15 @@ tabla 1:
 
 Variable|Expicación del variable
 -|-
-pelvic_incidence | Angulo entre la línea que pasa del centro de la lámina terminal del S1 al centro de las cabezas femorales, y la línea perpendicula a la lámina terminal de S1
-pelvic_tilt | Angulo entre la línea que pasa del centro de la lámina terminal del S1 al centro de las cabezas femorales y una línea vertical
-lumbar_lordosis_angle |  angulo entre la lámina terminal superior del L1 y S1
-sacral_sclope | angulo entre la línea perpendicula a la lámina terminal de S1 y una línea horizontal
-pelvic_radius | Es un angulo entre la línea vertical y una línea del centro de las cabezas femorales hasta el borde posterior de la lámina terminal de S1
-degree_spondylolysthesis | distancia de desplazamiento de la vertebrq superior sobre la vertebra inferior (positivo - anterior y negativo - posterior)
-class | 
-class_2c | Classificación de data como "normal" y "anoraml"
-class_3c | Classificación de data como "normal", "Hernia" y "spondilolistesis"
-
+pelvic_incidence, numerico | Angulo entre la línea que pasa del centro de la lámina terminal del S1 al centro de las cabezas femorales, y la línea perpendicula a la lámina terminal de S1
+pelvic_tilt, numerico | Angulo entre la línea que pasa del centro de la lámina terminal del S1 al centro de las cabezas femorales y una línea vertical
+lumbar_lordosis_angle, numerico |  angulo entre la lámina terminal superior del L1 y S1
+sacral_sclope, numerico | angulo entre la línea perpendicula a la lámina terminal de S1 y una línea horizontal
+pelvic_radius, numerico | Es un angulo entre la línea vertical y una línea del centro de las cabezas femorales hasta el borde posterior de la lámina terminal de S1
+degree_spondylolysthesis, numerico | distancia de desplazamiento de la vertebrq superior sobre la vertebra inferior (positivo - anterior y negativo - posterior)
+class | es posible utilizar este variable como character o factor.
+class_2c, factor | Classificación de data como "normal" y "anoraml"
+class_3c, factor | Classificación de data como "normal", "Hernia" y "spondilolistesis"
 
 
 En esta imagen presentaremos la visualización de lo angulos medidas en la base de datos.
@@ -51,7 +55,7 @@ Las bibliografía:
   2. https://www.orthobullets.com/spine/2071/lumbar-spine-anatomy  para la fecha de 25.12.2021
 
 ```{r Preparación de la base de datos}
-
+# Vamos a introducir los datos en RStudio. Para esto vamos a utilizar la libreria básica del R 
 column_2C <- read_csv("archive/column_2C_weka.csv", 
                     col_types = cols(pelvic_incidence = col_number(), 
                                            `pelvic_tilt numeric` = col_number(), 
@@ -63,12 +67,19 @@ column_3C <- read_csv("archive/column_3C_weka.csv",
                                              pelvic_tilt = col_number(), lumbar_lordosis_angle = col_number(), 
                                              sacral_slope = col_number(), pelvic_radius = col_number(), 
                                              degree_spondylolisthesis = col_number()))
-
+# Vamos a ajustar los nombres de variables y confirmamos que son iguales
 colnames(column_2C) <- colnames(column_3C)
+colnames(column_2C) %>% 
+  set_names() %>% 
+  map(~(column_2C[,.x]==column_3C[,.x])) %>% as.data.frame() %>% summary() #utilizaremos función map de la libreria purr de tidyverse, aplicando la función a todos los elementos de las columnas correspondientes.
+
+# Y cambiamos el nombre de la columna "class" para poder juntar los dos data frame.
 column_2C<-rename(column_2C, "class_2" = "class")
 column_3C<-rename(column_3C, "class_3" = "class")
 
+# Creamos un data frame con información de los dos archivos iniciales.
 ortho_df <- merge(column_2C, column_3C, by = c("pelvic_incidence", "pelvic_tilt", "lumbar_lordosis_angle", "sacral_slope", "pelvic_radius", "degree_spondylolisthesis"))
+# Convertimos la varibel class en un factor, con los niveles que van de nivel normal a nivel con alteraciones más faciles de encontrar (no se puede evidenciar la hernía intervertebral en la radiografia, pero la espondilolistesis - sí).
 ortho_df <- ortho_df %>% mutate("class_2" = factor(ortho_df$`class_2`, levels = c("Normal", "Abnormal")))
 ortho_df <- ortho_df %>% mutate("class_3" = factor(ortho_df$`class_3`, levels = c("Normal", "Hernia", "Spondylolisthesis")))
 
@@ -76,53 +87,14 @@ ortho_df <- ortho_df %>% mutate("class_3" = factor(ortho_df$`class_3`, levels = 
 
 
 ```{r Preparación de la base de datos para visualizaciónes y análisis}
+# En algunas ocasiones, para el objetivo de visualizar la data con mayor facilidad, vamos a cerar un data set con 
 ortho_df2 <- ortho_df %>% pivot_longer(cols = c(pelvic_incidence, pelvic_tilt, pelvic_radius, sacral_slope, lumbar_lordosis_angle), names_to = "type_of_measure", values_to = "angles") %>% select(type_of_measure, angles, everything())
 
 ortho_df3 <- ortho_df %>% select(where(is.numeric)) 
 ```
 
-
-```{r Evalación inicial de las variables}
-summary(ortho_df)
-summary(sapply(ortho_df,is.na))
-```
-
-
-```{r Visualización de las distribuciones}
-
-ortho_df2 %>% ggplot(aes(angles, fill = type_of_measure)) + geom_density(alpha = 0.2)+ facet_grid(~class_2)
-ortho_df2 %>% ggplot(aes(angles, fill = type_of_measure)) + geom_density(alpha = 0.2)+ facet_grid(~class_3)
-ortho_df2 %>% ggplot(aes(y= angles, color = type_of_measure)) + geom_boxplot() + facet_grid(~class_2)
-ortho_df2 %>% ggplot(aes(y= angles, color = type_of_measure)) + geom_boxplot() + facet_grid(~class_3)
-ortho_df2 %>% ggplot(aes(x= angles,y = degree_spondylolisthesis,  color = type_of_measure)) + geom_point() + facet_grid(~class_2)
-ortho_df2 %>% ggplot(aes(x= angles,y = degree_spondylolisthesis,  color = type_of_measure)) + geom_point() + facet_grid(~class_3)
-ortho_df2 %>% ggplot(aes(x =class_3, y= degree_spondylolisthesis, color = type_of_measure)) + geom_boxplot()
-
-
-```
-
-
-```{r Interaciones entre las variables}
-
-ortho_df %>% select(where(is.numeric)) %>% pairs()
-model.matrix(~0. + pelvic_incidence+pelvic_tilt+pelvic_radius+sacral_slope+lumbar_lordosis_angle+ degree_spondylolisthesis + class_3, ortho_df) %>%cor() %>% ggcorrplot(lab=T, lab_size=2.5,type = "lower")
-model.matrix(~0. + pelvic_incidence+pelvic_tilt+pelvic_radius+sacral_slope+lumbar_lordosis_angle+ degree_spondylolisthesis + class_3, ortho_df) %>%cor() %>% ggcorrplot(lab=T, lab_size=2.5,type = "lower")
-
-```
-
-
-```{r Los tests de normalidad}
-
-```
-
-
-
-
-```{r }
-
-```
-
-# Ejercicio 3: Con la Sección 2 de la PEC1 como base, elaborar y analizar una serie de cuestiones, que ayuden a explorar y a familiarizarse mejor con los datos de estudio. Además, en algunos casos, puede utilizarse la definición de funciones y el lenguaje SQL estudiado en el LAB3.
+# Ejercicio 3: 
+- Con la Sección 2 de la PEC1 como base, elaborar y analizar una serie de cuestiones, que ayuden a explorar y a familiarizarse mejor con los datos de estudio. Además, en algunos casos, puede utilizarse la definición de funciones y el lenguaje SQL estudiado en el LAB3.
 
 De todas las cuestiones que podemos realizar con estos datos, seleccionaremos las dos que, para nosotros, son las más destacables y extrapolables a una utilidad médica real.
 
@@ -137,13 +109,14 @@ Esta pregunta nos permitirá conocer la relación entre las variables de estudio
 
 Esta cuestión podrá resolverse mediante los estudios de regresión líneal y regresión múltiple (véase los ejercicios 5 y 6). Además, se realizará un análisis de clústering (véase ejercicio 7) para observar si es posible agrupar los datos de nuestra muestra.
 
-# Ejercicio 4: Realizar un análisis descriptivo de los datos. El análisis debe incluir un resumen paramétrico de los datos y su representación gráfica, que mejor defina y complemente cada una de dichas variables.
+# Ejercicio 4: 
+- Realizar un análisis descriptivo de los datos. El análisis debe incluir un resumen paramétrico de los datos y su representación gráfica, que mejor defina y complemente cada una de dichas variables.
 
 El primer elemento de nuestros datos que analizaremos es la estadística básica y el comportamiento de cada variable entre los grupos. 
 
 Primeramente observaremos la estadística básica de cada variable mediante el comando "summary()". Éste nos muestra los valores mínimos, máximos, primer y tercer cuartil, mediana y media para cada variable. Como la desviación estándar de cada variable no sale en el summary por defecto, para calcularla utilizaremos el comando "sd()". Al ser una variable de tipo caracter, mostramos las observaciones por grupos en las variables "class_2" y "class_3" mediante la herramienta "table()".
 
-```{r}
+```{r Summary}
 
 summary(ortho_df)
 table(ortho_df$class_2)
@@ -183,7 +156,7 @@ Hace falta remarcar que este análisis lo haremos para las variables de tipo ang
 
 **Variable 1: Incidencia pélvica (pelvic_incidence)**
 
-```{r}
+```{r pelvic_incidence}
 ## Media y desviación estándar para el grupo Normal
 mean(ortho_df$pelvic_incidence[ortho_df$class_2=="Normal"])
 sd(ortho_df$pelvic_incidence[ortho_df$class_2=="Normal"])
@@ -210,7 +183,7 @@ Observamos que la media del grupo "Normal" es ligeramente inferior a la del grup
 
 **Variable 2: Inclinación pélvica (pelvic_tilt)**
 
-```{r}
+```{r pelvic_tilt}
 ## Media y desviación estándar para el grupo Normal
 mean(ortho_df$pelvic_tilt[ortho_df$class_2=="Normal"])
 sd(ortho_df$pelvic_tilt[ortho_df$class_2=="Normal"])
@@ -237,7 +210,7 @@ Se observa que la media del grupo "Normal" para la inclinación pélvica es lige
 
 **Variable 3: Ángulo de lordosis lumbar (lumbar_lordosis_angle)**
 
-```{r}
+```{r lumbar_lordosis_angle}
 ## Media y desviación estándar para el grupo Normal
 mean(ortho_df$lumbar_lordosis_angle[ortho_df$class_2=="Normal"])
 sd(ortho_df$lumbar_lordosis_angle[ortho_df$class_2=="Normal"])
@@ -264,7 +237,7 @@ En este caso observamos que la media del grupo "Normal" es parecida a la del gru
 
 **Variable 4: Pendiente sacral (sacral_slope)**
 
-```{r}
+```{r sacral_slope}
 ## Media y desviación estándar para el grupo Normal
 mean(ortho_df$sacral_slope[ortho_df$class_2=="Normal"])
 sd(ortho_df$sacral_slope[ortho_df$class_2=="Normal"])
@@ -292,7 +265,7 @@ Existen outliers que pueden alterar la media de los datos, sobretodo en el grupo
 
 **Variable 5: Radio pélvico (pelvic_radius)**
 
-```{r}
+```{r pelvic_radius}
 ## Media y desviación estándar para el grupo Normal
 mean(ortho_df$pelvic_radius[ortho_df$class_2=="Normal"])
 sd(ortho_df$pelvic_radius[ortho_df$class_2=="Normal"])
@@ -319,7 +292,7 @@ Las medias de todos los grupos son semejantes, siendo ligeramente inferiores aqu
 
 **Variable 6: Grado de espondilolistesis (degree_spondylolisthesis)**
 
-```{r}
+```{r degree_spondylolisthesis}
 ## Media y desviación estándar para el grupo Normal
 mean(ortho_df$degree_spondylolisthesis[ortho_df$class_2=="Normal"])
 sd(ortho_df$degree_spondylolisthesis[ortho_df$class_2=="Normal"])
@@ -343,3 +316,42 @@ par(mfrow=c(1,1))
 ```
 
 Efectivamente el grado de espondilolistesis en pacientes con espondilolistesis es superior respecto al resto, el cual varía ligeramente de la media 0. Fíjese que esta variable es la única que se mide en milímetros, mostrándonos que la media de variación de la distancia entre vértebras lumbares en pacientes con espondilolistesis es de 51.89669 mm. Por lo tanto, **la mayoría de pacientes con espondilolistesis del estudio tienen un grado de espondilolistesis positivo**, es decir, la vértebra desplazada tiene un desplazamiento anterior respecto su vértebra inferior en la mayoría de casos.
+
+# Ejercicio 5
+- Complementando el apartado anterior, elaborar un análisis de regresión de dos conjuntos de variables (LAB2 y Ejercicio 6 de la PEC1). La elección de las variables, los resultados, así como su relación deben de estar correctamente justificada.
+
+```{r Evaluación de las connexiones de las variables}
+
+# Para los valores numericos se puede realizar un scatterplot de interacciones por parejas
+ortho_df %>% select(where(is.numeric)) %>% pairs() 
+# Podemos mirar las interacciones para la classificación de 2 clases
+model.matrix(~0. + pelvic_incidence+pelvic_tilt+pelvic_radius+sacral_slope+lumbar_lordosis_angle+ degree_spondylolisthesis + class_2, ortho_df) %>%cor() %>% ggcorrplot(lab=T, lab_size=2.5,type = "lower")
+
+# Podemos mirar las interacciones para la classificación de 3 clases
+model.matrix(~0. + pelvic_incidence+pelvic_tilt+pelvic_radius+sacral_slope+lumbar_lordosis_angle+ degree_spondylolisthesis + class_3, ortho_df) %>%cor() %>% ggcorrplot(lab=T, lab_size=2.5,type = "lower")
+
+```
+
+```{r modelo de regresión}
+model_pi <- lm(pelvic_incidence ~ lumbar_lordosis_angle, data = ortho_df)
+
+```
+
+```{r }
+
+```
+
+# Ejerecicio 6
+- Realizar, a partir de los conceptos trabajados en el LAB4 y la PEC2, un estudio probabilístico (a elección propia) de al menos 3 de las variables, que ayude a esclarecer cuestiones de relevancia que se plantean en los ámbitos de acción estudiados.
+
+```{r }
+
+```
+
+```{r }
+
+```
+
+```{r }
+
+```
