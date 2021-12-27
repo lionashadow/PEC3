@@ -31,12 +31,13 @@ El primer elemento de nuestros datos que analizaremos es la estadística básica
 Primeramente observaremos la estadística básica de cada variable mediante el comando "summary()". Éste nos muestra los valores mínimos, máximos, primer y tercer cuartil, mediana y media para cada variable. Como la desviación estándar de cada variable no sale en el summary por defecto, para calcularla utilizaremos el comando "sd()". Al ser una variable de tipo caracter, mostramos las observaciones por grupos en las variables "class_2" y "class_3" mediante la herramienta "table()".
 
 ```{r}
+
 summary(ortho_df)
 table(ortho_df$class_2)
 table(ortho_df$class_3)
 
 sd(ortho_df$pelvic_incidence)
-sd(ortho_df$pelvic_tilt.numeric)
+sd(ortho_df$pelvic_tilt)
 sd(ortho_df$lumbar_lordosis_angle)
 sd(ortho_df$sacral_slope)
 sd(ortho_df$pelvic_radius)

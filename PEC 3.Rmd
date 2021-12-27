@@ -1,6 +1,6 @@
 ---
 title: "PEC3"
-author: "Yury Postnikov"
+author: "Ferran Lugo y Yury Postnikov"
 date: "12/22/2021"
 output: html_document
 ---
@@ -122,3 +122,224 @@ model.matrix(~0. + pelvic_incidence+pelvic_tilt+pelvic_radius+sacral_slope+lumba
 
 ```
 
+# Ejercicio 3: Con la Sección 2 de la PEC1 como base, elaborar y analizar una serie de cuestiones, que ayuden a explorar y a familiarizarse mejor con los datos de estudio. Además, en algunos casos, puede utilizarse la definición de funciones y el lenguaje SQL estudiado en el LAB3.
+
+De todas las cuestiones que podemos realizar con estos datos, seleccionaremos las dos que, para nosotros, son las más destacables y extrapolables a una utilidad médica real.
+
+La primera cuestión sería relativa a la comparación de grupos. 
+**Pregunta 1: ¿Existen diferencias significativas entre las variables angulares del grupo "Normal" respecto al grupo "Abnormal" (personas con hernia o con espondilolistesis)?**. En otras palabras, ¿el hecho de tener hernia o espondilolistesis afecta significativamente en alguna de las variables de estudio? 
+Su respuesta nos permitirá discernir qué métodos de medida difieren estadísticamente respecto al grupo "Normal" y llegar a un mejor acercamiento a nivel de diseño de prótesis o clasificación de características de pacientes en bases de datos.
+
+Para resolver esta pregunta compararemos los datos de los grupos a lo largo de este estudio, visualizaremos los estadísticos básicos de nuestra muestra y realizaremos un análisis de varianza (ANOVA) de los grupos (véase los ejercicios 4 y 7).
+
+**Pregunta 2: ¿Existe alguna relación o correlación entre las variables del estudio?**
+Esta pregunta nos permitirá conocer la relación entre las variables de estudio para saber si puede existir cierta redundancia en la medida de la anatomía de la columna lumbar. Además, nos permitirá saber si existe un patrón significativo de influencia de una variable determinada a otra/otras variable/s.
+
+Esta cuestión podrá resolverse mediante los estudios de regresión líneal y regresión múltiple (véase los ejercicios 5 y 6). Además, se realizará un análisis de clústering (véase ejercicio 7) para observar si es posible agrupar los datos de nuestra muestra.
+
+# Ejercicio 4: Realizar un análisis descriptivo de los datos. El análisis debe incluir un resumen paramétrico de los datos y su representación gráfica, que mejor defina y complemente cada una de dichas variables.
+
+El primer elemento de nuestros datos que analizaremos es la estadística básica y el comportamiento de cada variable entre los grupos. 
+
+Primeramente observaremos la estadística básica de cada variable mediante el comando "summary()". Éste nos muestra los valores mínimos, máximos, primer y tercer cuartil, mediana y media para cada variable. Como la desviación estándar de cada variable no sale en el summary por defecto, para calcularla utilizaremos el comando "sd()". Al ser una variable de tipo caracter, mostramos las observaciones por grupos en las variables "class_2" y "class_3" mediante la herramienta "table()".
+
+```{r}
+
+summary(ortho_df)
+table(ortho_df$class_2)
+table(ortho_df$class_3)
+
+sd(ortho_df$pelvic_incidence)
+sd(ortho_df$pelvic_tilt)
+sd(ortho_df$lumbar_lordosis_angle)
+sd(ortho_df$sacral_slope)
+sd(ortho_df$pelvic_radius)
+sd(ortho_df$degree_spondylolisthesis)
+```
+
+Obsérvese que podemos determinar los límites anotados para cada variable y el comportamiento general mediante la media y la desviación estándar. Estos valores nos servirán más adelante para determinar un intervalo para presentar las variables en gráficos.
+
+La variable **"pelvic_incidence"** tiene valores de 26.15º hasta 129.83º. Su media es 60.50º con una desviación estándar de 17.23652º.
+
+La variable **"pelvic_tilt"** tiene valores de -6.555º hasta 49.432º. Su media es de 17.543º con una desviación estándar de 10.00833º.
+
+La variable **"lumbar_lordosis_angle"** tiene valores de 14º hasta 125.74º. Su media es de 51.93º con una desviación estándar de 18.55406º.
+
+La variable **"sacral_slope"** tiene valores de 13.37º hasta 121.43º. Su media es de 42.95º con una desviación estándar de 13.4231º.
+
+La variable **"pelvic_radius"** tiene valores desde 70.08º hasta 163.07º. Su media es de 117.92º con una desviación estándar de 13.31738º.
+
+La variable **"degree_spondylolisthesis"** tiene valores desde -11.058 mm hasta 418.543 mm. Su media es de 26.297mm con una desviación estándar de 37.55903 mm.
+
+Las variables **"class_2 y class_3"** incluyen 210 personas en el grupo "Abnormal" (60 con hernia y 150 con espondilolistesis) y 100 personas en el grupo "Normal".
+
+Aunque esta descripción nos sirve para acotar los valores de las variables con los que trabajamos, los datos comprenden todos grupos de estudio en conjunto. 
+
+Nuestro objetivo principal es la comparación entre personas del grupo "Normal" (sin anomalías aparentes relativas a la postura pélvica y lumbar) y "Abnormal" (personas con hernia o espondilolistesis diagnosticada) para determinar si existen diferencias significativas en las variables. 
+
+El hecho de dividir los datos podría llegar a mostrar una diferencia en el comportamiento de los mismos. Es por eso que realizaremos un análisis de comparación de variables según los grupos. El valor que compararemos será la media de cada variable, con su desviación estándar anotada. Para ello, dividiremos la media de cada variable según cada grupo (Normal/Abnormal/Hernia/Spondylolisthesis). Asimismo, para hacer un análisis visual, las diferencias entre grupos de estudio se representarán en gráficos de cajas (boxplots). En cada caso se utilizarán los intervalos calculados anteriormente para que la representación de cada gráfico esté en el mismo intervalo y que así su comparación sea más intuitiva y fácil.
+
+Hace falta remarcar que este análisis lo haremos para las variables de tipo angular (las cinco primeras variables). Al tratarse de un trabajo de ámbito educativo, para la variable "grado de espondilolistesis" realizaremos la comparación igualmente, pero de antemano sabemos que será superior en pacientes del grupo "espondilolistesis" respecto al resto, ya que tienen dicha afectación diagnosticada.
+
+**Variable 1: Incidencia pélvica (pelvic_incidence)**
+
+```{r}
+## Media y desviación estándar para el grupo Normal
+mean(ortho_df$pelvic_incidence[ortho_df$class_2=="Normal"])
+sd(ortho_df$pelvic_incidence[ortho_df$class_2=="Normal"])
+## Media y desviación estándar para el grupo Abnormal (hernia y espondilolistesis)
+mean(ortho_df$pelvic_incidence[ortho_df$class_2=="Abnormal"])
+sd(ortho_df$pelvic_incidence[ortho_df$class_2=="Abnormal"])
+## Media y desviación estándar para el grupo Hernia
+mean(ortho_df$pelvic_incidence[ortho_df$class_3=="Hernia"])
+sd(ortho_df$pelvic_incidence[ortho_df$class_3=="Hernia"])
+## Media y desviación estándar para el grupo Espondilolistesis
+mean(ortho_df$pelvic_incidence[ortho_df$class_3=="Spondylolisthesis"])
+sd(ortho_df$pelvic_incidence[ortho_df$class_3=="Spondylolisthesis"])
+
+## Gráfico de la variable para cada grupo
+par(mfrow=c(1,4))
+boxplot(ortho_df$pelvic_incidence[ortho_df$class_3=="Normal"],col="darkolivegreen1",main="Incidencia pélvica", xlab="Normal", ylim=c(20,130))
+boxplot(ortho_df$pelvic_incidence[ortho_df$class_2=="Abnormal"],col="Tomato",main="Incidencia pélvica", xlab="Abnormal",ylim=c(20,130))
+boxplot(ortho_df$pelvic_incidence[ortho_df$class_3=="Hernia"],col="coral1",main="Incidencia pélvica", xlab="Hernia", ylim=c(20,130))
+boxplot(ortho_df$pelvic_incidence[ortho_df$class_3=="Spondylolisthesis"],col="darkturquoise",main="Incidencia pélvica", xlab="Spondylolisthesis", ylim=c(20,130))
+par(mfrow=c(1,1))
+```
+
+Observamos que la media del grupo "Normal" es ligeramente inferior a la del grupo "Spondylolisthesis". Al haber más pacientes en la muestra con "Spondylolisthesis" que en la de "Hernia", la media del grupo "Abnormal" resulta ser superior a la del grupo "Normal", con una desviación estándar muy alta. Este hecho se observa en los gráficos, donde parece que el grupo "Spondylolisthesis" supera significativamente la media otorgada por el grupo "Normal". Como sólo observamos tres outliers aparentes en el grupo de espondilolistesis (la muestra no parece tener mucha distorsión), nuestra primera hipótesis será que **los pacientes con espondilolistesis podrían tener una mayor incidencia pélvica general**. Así, es probable que la variable "incidencia pélvica" tenga cierto peso a la hora de analizarse en dicho grupo.
+
+**Variable 2: Inclinación pélvica (pelvic_tilt)**
+
+```{r}
+## Media y desviación estándar para el grupo Normal
+mean(ortho_df$pelvic_tilt[ortho_df$class_2=="Normal"])
+sd(ortho_df$pelvic_tilt[ortho_df$class_2=="Normal"])
+## Media y desviación estándar para el grupo Abnormal (hernia y espondilolistesis)
+mean(ortho_df$pelvic_tilt[ortho_df$class_2=="Abnormal"])
+sd(ortho_df$pelvic_tilt[ortho_df$class_2=="Abnormal"])
+## Media y desviación estándar para el grupo Hernia
+mean(ortho_df$pelvic_tilt[ortho_df$class_3=="Hernia"])
+sd(ortho_df$pelvic_tilt[ortho_df$class_3=="Hernia"])
+## Media y desviación estándar para el grupo Espondilolistesis
+mean(ortho_df$pelvic_tilt[ortho_df$class_3=="Spondylolisthesis"])
+sd(ortho_df$pelvic_tilt[ortho_df$class_3=="Spondylolisthesis"])
+
+## Gráfico de la variable para cada grupo
+par(mfrow=c(1,4))
+boxplot(ortho_df$pelvic_tilt[ortho_df$class_3=="Normal"],col="darkolivegreen1",main="Inclinación pélvica", xlab="Normal", ylim=c(-7,50))
+boxplot(ortho_df$pelvic_tilt[ortho_df$class_2=="Abnormal"],col="Tomato",main="Inclinación pélvica", xlab="Abnormal",ylim=c(-7,50))
+boxplot(ortho_df$pelvic_tilt[ortho_df$class_3=="Hernia"],col="coral1",main="Inclinación pélvica", xlab="Hernia", ylim=c(-7,50))
+boxplot(ortho_df$pelvic_tilt[ortho_df$class_3=="Spondylolisthesis"],col="darkturquoise",main="Inclinación pélvica", xlab="Spondylolisthesis", ylim=c(-7,50))
+par(mfrow=c(1,1))
+```
+
+Se observa que la media del grupo "Normal" para la inclinación pélvica es ligeramente inferior que la de los otros grupos. No obstante, al existir una desviación estándar realmente alta para todos los grupos en esta variable, es probable que la distinción entre grupos no llegue a ser significativa. Una desviación estándar elevada implica que existe una gran variabilidad en los valores de la muestra para la variable en cuestión. Por lo tanto, no esperamos diferencias significativas entre individuos de los distintos grupos para esta variable.
+
+**Variable 3: Ángulo de lordosis lumbar (lumbar_lordosis_angle)**
+
+```{r}
+## Media y desviación estándar para el grupo Normal
+mean(ortho_df$lumbar_lordosis_angle[ortho_df$class_2=="Normal"])
+sd(ortho_df$lumbar_lordosis_angle[ortho_df$class_2=="Normal"])
+## Media y desviación estándar para el grupo Abnormal (hernia y espondilolistesis)
+mean(ortho_df$lumbar_lordosis_angle[ortho_df$class_2=="Abnormal"])
+sd(ortho_df$lumbar_lordosis_angle[ortho_df$class_2=="Abnormal"])
+## Media y desviación estándar para el grupo Hernia
+mean(ortho_df$lumbar_lordosis_angle[ortho_df$class_3=="Hernia"])
+sd(ortho_df$lumbar_lordosis_angle[ortho_df$class_3=="Hernia"])
+## Media y desviación estándar para el grupo Espondilolistesis
+mean(ortho_df$lumbar_lordosis_angle[ortho_df$class_3=="Spondylolisthesis"])
+sd(ortho_df$lumbar_lordosis_angle[ortho_df$class_3=="Spondylolisthesis"])
+
+## Gráfico de la variable para cada grupo
+par(mfrow=c(1,4))
+boxplot(ortho_df$lumbar_lordosis_angle[ortho_df$class_3=="Normal"],col="darkolivegreen1",main="Lordosis lumbar", xlab="Normal", ylim=c(13,126))
+boxplot(ortho_df$lumbar_lordosis_angle[ortho_df$class_2=="Abnormal"],col="Tomato",main="Lordosis lumbar", xlab="Abnormal",ylim=c(13,126))
+boxplot(ortho_df$lumbar_lordosis_angle[ortho_df$class_3=="Hernia"],col="coral1",main="Lordosis lumbar", xlab="Hernia", ylim=c(13,126))
+boxplot(ortho_df$lumbar_lordosis_angle[ortho_df$class_3=="Spondylolisthesis"],col="darkturquoise",main="Lordosis lumbar", xlab="Spondylolisthesis", ylim=c(13,126))
+par(mfrow=c(1,1))
+```
+
+En este caso observamos que la media del grupo "Normal" es parecida a la del grupo "Hernia", pero difiere bastante de la del grupo "Spondylolisthesis". Aunque exista algún outlier apartado que pueda hacer aumentar la desviación estándar de cada grupo (véase los puntos superiores que se distancian de la media en cada gráfico), es probable que esta comparativa pueda ser significativa. Así, nuestra segunda hipótesis es que **los pacientes con espondilolistesis podrían tener un mayor ángulo de lordosis lumbar**. Y por lo tanto, la variable "ángulo de lordosis lumbar" podría tener más peso en este grupo de pacientes. 
+
+**Variable 4: Pendiente sacral (sacral_slope)**
+
+```{r}
+## Media y desviación estándar para el grupo Normal
+mean(ortho_df$sacral_slope[ortho_df$class_2=="Normal"])
+sd(ortho_df$sacral_slope[ortho_df$class_2=="Normal"])
+## Media y desviación estándar para el grupo Abnormal (hernia y espondilolistesis)
+mean(ortho_df$sacral_slope[ortho_df$class_2=="Abnormal"])
+sd(ortho_df$sacral_slope[ortho_df$class_2=="Abnormal"])
+## Media y desviación estándar para el grupo Hernia
+mean(ortho_df$sacral_slope[ortho_df$class_3=="Hernia"])
+sd(ortho_df$sacral_slope[ortho_df$class_3=="Hernia"])
+## Media y desviación estándar para el grupo Espondilolistesis
+mean(ortho_df$sacral_slope[ortho_df$class_3=="Spondylolisthesis"])
+sd(ortho_df$sacral_slope[ortho_df$class_3=="Spondylolisthesis"])
+
+## Gráfico de la variable para cada grupo
+par(mfrow=c(1,4))
+boxplot(ortho_df$sacral_slope[ortho_df$class_3=="Normal"],col="darkolivegreen1",main="Pendiente sacral", xlab="Normal", ylim=c(12,122))
+boxplot(ortho_df$sacral_slope[ortho_df$class_2=="Abnormal"],col="Tomato",main="Pendiente sacral", xlab="Abnormal",ylim=c(12,122))
+boxplot(ortho_df$sacral_slope[ortho_df$class_3=="Hernia"],col="coral1",main="Pendiente sacral", xlab="Hernia", ylim=c(12,122))
+boxplot(ortho_df$sacral_slope[ortho_df$class_3=="Spondylolisthesis"],col="darkturquoise",main="Pendiente sacral", xlab="Spondylolisthesis", ylim=c(12,122))
+par(mfrow=c(1,1))
+```
+
+Para la pendiente sacral observamos que las medias de los grupos difieren muy ligeramente, siendo superior en el grupo "Spondylolisthesis".
+Existen outliers que pueden alterar la media de los datos, sobretodo en el grupo "Spondylolisthesis", donde se observan varios puntos que se alejan significativamente del comportamiento del resto de las muestras. Es por eso que probablemente no existan diferencias significativas entre la media de los grupos para esta variable, ya que sin estos outliers la media del grupo "Spondylolisthesis" bajaría y se asemejaría aún más a la de los otros grupos.
+
+**Variable 5: Radio pélvico (pelvic_radius)**
+
+```{r}
+## Media y desviación estándar para el grupo Normal
+mean(ortho_df$pelvic_radius[ortho_df$class_2=="Normal"])
+sd(ortho_df$pelvic_radius[ortho_df$class_2=="Normal"])
+## Media y desviación estándar para el grupo Abnormal (hernia y espondilolistesis)
+mean(ortho_df$pelvic_radius[ortho_df$class_2=="Abnormal"])
+sd(ortho_df$pelvic_radius[ortho_df$class_2=="Abnormal"])
+## Media y desviación estándar para el grupo Hernia
+mean(ortho_df$pelvic_radius[ortho_df$class_3=="Hernia"])
+sd(ortho_df$pelvic_radius[ortho_df$class_3=="Hernia"])
+## Media y desviación estándar para el grupo Espondilolistesis
+mean(ortho_df$pelvic_radius[ortho_df$class_3=="Spondylolisthesis"])
+sd(ortho_df$pelvic_radius[ortho_df$class_3=="Spondylolisthesis"])
+
+## Gráfico de la variable para cada grupo
+par(mfrow=c(1,4))
+boxplot(ortho_df$pelvic_radius[ortho_df$class_3=="Normal"],col="darkolivegreen1",main="Radio pélvico", xlab="Normal", ylim=c(69,164))
+boxplot(ortho_df$pelvic_radius[ortho_df$class_2=="Abnormal"],col="Tomato",main="Radio pélvico", xlab="Abnormal",ylim=c(69,164))
+boxplot(ortho_df$pelvic_radius[ortho_df$class_3=="Hernia"],col="coral1",main="Radio pélvico", xlab="Hernia", ylim=c(69,164))
+boxplot(ortho_df$pelvic_radius[ortho_df$class_3=="Spondylolisthesis"],col="darkturquoise",main="Radio pélvico", xlab="Spondylolisthesis", ylim=c(69,164))
+par(mfrow=c(1,1))
+```
+
+Las medias de todos los grupos son semejantes, siendo ligeramente inferiores aquellas del grupo abnormal (incluyendo a los grupos hernia y espondilolistesis por separado). La gran variabilidad en el grupo de espondilolistesis (fíjese en su gran desviación estándar) hace dudar de la significación de esta comparación, aunque sea posible que la variable "radio pélvico" sea distintiva en el grupo "Normal" respecto al resto. Aún así, debido a la variabilidad no esperamos que se cumpla esta hipótesis a priori.
+
+**Variable 6: Grado de espondilolistesis (degree_spondylolisthesis)**
+
+```{r}
+## Media y desviación estándar para el grupo Normal
+mean(ortho_df$degree_spondylolisthesis[ortho_df$class_2=="Normal"])
+sd(ortho_df$degree_spondylolisthesis[ortho_df$class_2=="Normal"])
+## Media y desviación estándar para el grupo Abnormal (hernia y espondilolistesis)
+mean(ortho_df$degree_spondylolisthesis[ortho_df$class_2=="Abnormal"])
+sd(ortho_df$degree_spondylolisthesis[ortho_df$class_2=="Abnormal"])
+## Media y desviación estándar para el grupo Hernia
+mean(ortho_df$degree_spondylolisthesis[ortho_df$class_3=="Hernia"])
+sd(ortho_df$degree_spondylolisthesis[ortho_df$class_3=="Hernia"])
+## Media y desviación estándar para el grupo Espondilolistesis
+mean(ortho_df$degree_spondylolisthesis[ortho_df$class_3=="Spondylolisthesis"])
+sd(ortho_df$degree_spondylolisthesis[ortho_df$class_3=="Spondylolisthesis"])
+
+## Gráfico de la variable para cada grupo
+par(mfrow=c(1,4))
+boxplot(ortho_df$degree_spondylolisthesis[ortho_df$class_3=="Normal"],col="darkolivegreen1",main="G.espondilolistesis", xlab="Normal", ylim=c(-12,419))
+boxplot(ortho_df$degree_spondylolisthesis[ortho_df$class_2=="Abnormal"],col="Tomato",main="G.espondilolistesis", xlab="Abnormal",ylim=c(-12,419))
+boxplot(ortho_df$degree_spondylolisthesis[ortho_df$class_3=="Hernia"],col="coral1",main="G.espondilolistesis", xlab="Hernia", ylim=c(-12,419))
+boxplot(ortho_df$degree_spondylolisthesis[ortho_df$class_3=="Spondylolisthesis"],col="darkturquoise",main="G.espondilolistesis", xlab="Spondylolisthesis", ylim=c(-12,419))
+par(mfrow=c(1,1))
+```
+
+Efectivamente el grado de espondilolistesis en pacientes con espondilolistesis es superior respecto al resto, el cual varía ligeramente de la media 0. Fíjese que esta variable es la única que se mide en milímetros, mostrándonos que la media de variación de la distancia entre vértebras lumbares en pacientes con espondilolistesis es de 51.89669 mm. Por lo tanto, **la mayoría de pacientes con espondilolistesis del estudio tienen un grado de espondilolistesis positivo**, es decir, la vértebra desplazada tiene un desplazamiento anterior respecto su vértebra inferior en la mayoría de casos.
