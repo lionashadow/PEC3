@@ -8,8 +8,8 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(MASS)
-library(ggcorrplot)
 library(ggplot2)
+library(ggcorrplot)
 library(ggpubr)
 library(tidyverse)
 library(broom)
@@ -458,13 +458,16 @@ ortho_df %>% ggplot(aes(lumbar_lordosis_angle, pelvic_incidence, color = class_3
   geom_point()
 ortho_df %>% ggplot(aes(lumbar_lordosis_angle, pelvic_incidence, color = class_2)) +
   geom_point()
+fviz_nbclust(ortho_df[,c(1,3)], kmeans, method = "wss")
+
+cluster2 <- kmeans(ortho_df[, c(1,3)], 2, nstart = 25)
+table(cluster2$cluster, ortho_df$class_2)
+fviz_cluster(cluster2, data = ortho_df[, c(1,3)])
 
 cluster3 <- kmeans(ortho_df[, c(1,3)], 3, nstart = 25)
 table(cluster3$cluster, ortho_df$class_3)
 fviz_cluster(cluster3, data = ortho_df[, c(1,3)])
-cluster2 <- kmeans(ortho_df[, c(1,3)], 2, nstart = 25)
-table(cluster2$cluster, ortho_df$class_2)
-fviz_cluster(cluster2, data = ortho_df[, c(1,3)])
+
 
 
 cluster <- hclust(dist(ortho_df), method="complete")

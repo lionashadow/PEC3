@@ -75,7 +75,7 @@ abline(ortho_lm)
 
 Como conclusión podemos decir que, aunque el coeficiente de determinación no sea muy elevado, las dos variables analizadas (incidencia pélvica y pendiente sacral) tienen cierta relación en cuanto a su comportamiento. Además, sabemos que esta relación es positiva (un aumento de la pendiente sacral puede implicar un aumento de la incidencia pélvica). Estos datos son consistentes con el comportamiento biológico esperado, ya que el hecho de tener una pendiente sacral más elevada significa que el ángulo entre el sacro y la horizontal aumenta, haciendo inclinar la pelvis. Al hacerlo, el ángulo de incidencia pélvica aumentaría debido a que éste tiene su base de medida entre el eje bicoxofemoral (que no habría cambiado) y línea perpendicular a la placa sacra (que se habría movido).
 
-Este argumento se sustenta de bibliografía, como el estudio de E.V. Geiger et al. (2007), que econtró una correlación entre estas dos variables en su muestra de pacientes.
+Este argumento se sustenta de bibliografía, como el estudio de E.V. Geiger et al. (2007), que encontró una correlación entre estas dos variables en su muestra de pacientes.
 
 <https://www.researchgate.net/publication/7022399_Adjustment_of_pelvispinal_parameters_preserves_the_constant_gravity_line_position>
 
