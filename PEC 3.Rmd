@@ -463,10 +463,12 @@ fviz_nbclust(ortho_df[,c(1,3)], kmeans, method = "silhouette")
 
 cluster2 <- kmeans(ortho_df[, c(1,3)], 2, nstart = 25)
 table(cluster2$cluster, ortho_df$class_2)
+summary(cluster2)
 fviz_cluster(cluster2, data = ortho_df[, c(1,3)])
 
 cluster3 <- kmeans(ortho_df[, c(1,3)], 3, nstart = 25)
 table(cluster3$cluster, ortho_df$class_3)
+summary(cluster3)
 fviz_cluster(cluster3, data = ortho_df[, c(1,3)])
 
 
