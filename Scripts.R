@@ -5,6 +5,8 @@ library(ggpubr)
 library(dplyr)
 library(tidyverse)
 library(broom)
+library(cluster)
+library(factoextra)
 
 
 column_2C <- read_csv("archive/column_2C_weka.csv", 
@@ -53,7 +55,7 @@ ortho_df2 %>% ggplot(aes(y= angles, color = type_of_measure)) + geom_boxplot() +
 ortho_df2 %>% ggplot(aes(x= angles,y = degree_spondylolisthesis,  color = type_of_measure)) + geom_point() + facet_grid(~class_2)
 ortho_df2 %>% ggplot(aes(x= angles,y = degree_spondylolisthesis,  color = type_of_measure)) + geom_point() + facet_grid(~class_3)
 ortho_df2 %>% ggplot(aes(x =class_3, y= degree_spondylolisthesis, color = type_of_measure)) + geom_boxplot()
-
+ortho_df2 %>% ggplot(aes(x =class_2, y= degree_spondylolisthesis, color = type_of_measure)) + geom_boxplot()
 # Normality test
 
 ## Kolmogorov-Smirnov
@@ -74,6 +76,144 @@ ggqqplot(ortho_df2, "angles", facet.by = "class_2", color = "type_of_measure")
 ggqqplot(ortho_df2, "degree_spondylolisthesis", color = "class_3", facet.by  = "class_2")
 
 
+# LRM 
+
+model_pi <- lm(pelvic_incidence ~ lumbar_lordosis_angle, data = ortho_df)
+model_pi_k = coef(model_pi)
+
+ortho_df %>% ggplot(aes(lumbar_lordosis_angle, pelvic_incidence, color = class_3)) + geom_point() + geom_smooth(method = "lm") + geom_abline(slope = model_pi_k[["lumbar_lordosis_angle"]], intercept = model_pi_k[["(Intercept)"]])
+ortho_df %>% ggplot(aes(lumbar_lordosis_angle, pelvic_incidence, color = class_2)) + geom_point() + geom_smooth(method = "lm") + geom_abline(slope = model_pi_k[["lumbar_lordosis_angle"]], intercept = model_pi_k[["(Intercept)"]])
+
+model_pi_mult <- lm(pelvic_incidence ~ lumbar_lordosis_angle + pelvic_radius+ degree_spondylolisthesis + class_2 + class_3, data = ortho_df)
+
+step(model_pi_mult, direction = "both", trace = 1)
+
+model_pi_mult <- lm(pelvic_incidence ~ lumbar_lordosis_angle + pelvic_radius+ degree_spondylolisthesis, data = ortho_df)
+
+model_pi_mult_clean <- lm(formula = pelvic_incidence ~ lumbar_lordosis_angle + pelvic_radius + degree_spondylolisthesis, data = ortho_df)
+predicted_pelvic_incidence <- data.frame(pelvic_incidence_pred = predict(model_pi_mult_clean, ortho_df), lumbar_lordosis_angle = ortho_df$lumbar_lordosis_angle, pelvic_radius= ortho_df$pelvic_radius, degree_spondylolisthesis = ortho_df$degree_spondylolisthesis)
+ggplot(ortho_df, aes(lumbar_lordosis_angle, pelvic_incidence)) +
+  geom_point(color = "blue") +
+  geom_abline(slope = model_pi_k[["lumbar_lordosis_angle"]], intercept = model_pi_k[["(Intercept)"]]) +
+  geom_line(data = predicted_pelvic_incidence, aes(lumbar_lordosis_angle, pelvic_incidence_pred), color = "darkgreen")
+
+par(mfrow=c(1,2))
+resid_lr <- rstandard(model_pi)
+plot(fitted.values(model_pi), resid_lr)
+abline(h=0)
+resid_mr <- rstandard(model_pi_mult_clean)
+plot(fitted.values(model_pi_mult_clean), resid_mr)
+abline(h=0)
+
+# ANOVA y Custering
+
+## Valores médias y desviaciónes
+
+### En todos grupos
+ortho_df2 %>% group_by(type_of_measure) %>% summarise("Mean of angle" = mean(angles), "Standart deviation" = sd(angles))
+
+ortho_df2 %>%  summarise("Mean of displacement" = mean(degree_spondylolisthesis), "SD of displacement" = sd(degree_spondylolisthesis))
 
 
+ortho_df2 %>% ggplot(aes(y= angles, x = type_of_measure, fill = type_of_measure)) +
+  geom_boxplot() + stat_summary(fun =mean, shape = 18, size = 1)
+
+ortho_df2 %>% ggplot(aes(y= degree_spondylolisthesis, fill = "red", x = 0)) +
+  geom_boxplot() +
+  stat_summary(fun = mean, shape = 18, size =1)
+
+### En grupos por 2 classificaciones
+ortho_df2 %>% group_by(type_of_measure, class_2) %>%
+  summarise("Mean of angle" = mean(angles), "Standart deviation" = sd(angles))
+ortho_df2 %>% group_by(class_2) %>%
+  summarise("Mean of displacement" = mean(degree_spondylolisthesis), "SD of displacement" = sd(degree_spondylolisthesis))
+
+ortho_df2 %>% ggplot(aes(x =class_2, y= degree_spondylolisthesis, color = class_2)) +
+  geom_boxplot() +
+  stat_summary(fun.y = mean, geom = "point", shape = 18, size = 3)
+
+ortho_df2 %>% ggplot(aes(y= angles, x = class_2, color = type_of_measure)) +
+  geom_boxplot() +
+  stat_summary(fun.y = mean, geom = "point", shape = 18, size = 3)
+
+### En grupos por 3 classificaciones
+ortho_df2 %>% group_by(type_of_measure, class_3) %>% 
+  summarise("Mean of angle" = mean(angles), "Standart deviation" = sd(angles))
+
+ortho_df2 %>% group_by(class_3) %>%  
+  summarise("Mean of displacement" = mean(degree_spondylolisthesis), "SD of displacement" = sd(degree_spondylolisthesis))
+
+ortho_df2 %>% ggplot(aes(x =class_3, y= degree_spondylolisthesis, color = class_3)) +
+  geom_boxplot() +
+  stat_summary(fun.y = mean, geom = "point", shape = 18, size = 3)
+
+ortho_df2 %>% ggplot(aes(y= angles,x =class_3,color = type_of_measure)) +
+  geom_boxplot() + 
+  stat_summary(fun.y = mean, geom = "point", shape = 18, size = 3)
+
+## Normality tests
+### Kolmogorov-Smirnov
+
+ortho_df %>% select(where(is.numeric))%>% colnames() %>%
+  set_names() %>%  map(~ ks.test(ortho_df[,.], "pnorm")) %>%
+  map_dfr(., tidy, .id = "variable")
+
+### Shapiro
+ortho_df %>% select(where(is.numeric))%>% colnames() %>%
+  set_names() %>%  map(~ shapiro.test(ortho_df[,.x])) %>%
+  map_dfr(., tidy, .id = "variable")
+
+### QQplot
+gqqplot(ortho_df2, "angles", facet.by = "class_3", color = "type_of_measure")
+ggqqplot(ortho_df2, "angles", facet.by = "class_2", color = "type_of_measure")
+ggqqplot(ortho_df2, "degree_spondylolisthesis", color = "class_3", facet.by  = "class_2")
+
+
+### Homogenidad
+ortho_df %>% select(where(is.numeric))%>% colnames() %>%
+  set_names() %>%  map(~ fligner.test(ortho_df[,.] ~ class_2, data = ortho_df)) %>%
+  map_dfr(., tidy, .id = "variable")
+
+# Anova
+anova_PI <- aov(pelvic_incidence~class_3, ortho_df)
+anova_S <- aov(degree_spondylolisthesis~class_3, ortho_df)
+anova_PR <- aov(pelvic_radius~class_3, ortho_df)
+anova_LLA <- aov(lumbar_lordosis_angle~class_3, ortho_df)
+
+par(mfrow=c(2,2))
+plot(anova_PI)
+par(mfrow=c(1,1))
+plot(TukeyHSD(anova_PI))
+par(mfrow=c(2,2))
+plot(anova_S)
+par(mfrow=c(1,1))
+plot(TukeyHSD(anova_S))
+par(mfrow=c(2,2))
+plot(anova_PR)
+par(mfrow=c(1,1))
+plot(TukeyHSD(anova_PR))
+
+par(mfrow=c(2,2))
+plot(anova_LLA)
+plot(TukeyHSD(anova_LLA))
+par(mfrow=c(1,1))
+
+## Cluster 
+
+ortho_df %>% ggplot(aes(lumbar_lordosis_angle, pelvic_incidence, color = class_3)) +
+  geom_point()
+ortho_df %>% ggplot(aes(lumbar_lordosis_angle, pelvic_incidence, color = class_2)) +
+  geom_point()
+
+cluster3 <- kmeans(ortho_df[, c(1,3)], 3, nstart = 25)
+table(cluster3$cluster, ortho_df$class_3)
+fviz_cluster(cluster3, data = ortho_df[, c(1,3)])
+cluster2 <- kmeans(ortho_df[, c(1,3)], 2, nstart = 25)
+table(cluster2$cluster, ortho_df$class_2)
+fviz_cluster(cluster2, data = ortho_df[, c(1,3)])
+
+
+cluster <- hclust(dist(ortho_df), method="complete")
+plot(cluster)
+pltree(agnes(ortho_df, method = "complete"))
 
