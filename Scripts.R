@@ -43,7 +43,7 @@ summary(ortho_df)
 summary(sapply(ortho_df,is.na))
 
 ortho_df %>% select(where(is.numeric)) %>% pairs()
-model.matrix(~0. + pelvic_incidence+pelvic_tilt+pelvic_radius+sacral_slope+lumbar_lordosis_angle+ degree_spondylolisthesis + class_3, ortho_df) %>%cor() %>% ggcorrplot(lab=T, lab_size=2.5,type = "lower")
+model.matrix(~0. + pelvic_incidence+pelvic_tilt+pelvic_radius+sacral_slope+lumbar_lordosis_angle+ degree_spondylolisthesis + class_2, ortho_df) %>%cor() %>% ggcorrplot(lab=T, lab_size=2.5,type = "lower")
 model.matrix(~0. + pelvic_incidence+pelvic_tilt+pelvic_radius+sacral_slope+lumbar_lordosis_angle+ degree_spondylolisthesis + class_3, ortho_df) %>%cor() %>% ggcorrplot(lab=T, lab_size=2.5,type = "lower")
 
 # Visualization part
@@ -183,13 +183,16 @@ anova_LLA <- aov(lumbar_lordosis_angle~class_3, ortho_df)
 par(mfrow=c(2,2))
 plot(anova_PI)
 par(mfrow=c(1,1))
+
 plot(TukeyHSD(anova_PI))
 par(mfrow=c(2,2))
 plot(anova_S)
 par(mfrow=c(1,1))
+
 plot(TukeyHSD(anova_S))
 par(mfrow=c(2,2))
 plot(anova_PR)
+
 par(mfrow=c(1,1))
 plot(TukeyHSD(anova_PR))
 
@@ -205,10 +208,11 @@ ortho_df %>% ggplot(aes(lumbar_lordosis_angle, pelvic_incidence, color = class_3
 ortho_df %>% ggplot(aes(lumbar_lordosis_angle, pelvic_incidence, color = class_2)) +
   geom_point()
 
-cluster3 <- kmeans(ortho_df[, c(1,3)], 3, nstart = 25)
+cluster3 <- kmeans(ortho_df[, c(1,5)], 3, nstart = 25)
 table(cluster3$cluster, ortho_df$class_3)
-fviz_cluster(cluster3, data = ortho_df[, c(1,3)])
-cluster2 <- kmeans(ortho_df[, c(1,3)], 2, nstart = 25)
+summary(cluster3)
+fviz_cluster(cluster3, data = ortho_df[, c(1:6)])
+cluster2 <- kmeans(ortho_df[, c(1,5)], 2, nstart = 25)
 table(cluster2$cluster, ortho_df$class_2)
 fviz_cluster(cluster2, data = ortho_df[, c(1,3)])
 
@@ -217,3 +221,26 @@ cluster <- hclust(dist(ortho_df), method="complete")
 plot(cluster)
 pltree(agnes(ortho_df, method = "complete"))
 
+
+ortho_df2 %>% 
+  group_by(type_of_measure) %>%
+  summarise("Mean of angle" = mean(angles),
+            "Standart deviation" = sd(angles),"+CI" = confint(lm(angles~1, ortho_df))[,1], "-CI" = confint(lm(angles~1, ortho_df))[,2])
+
+confint(lm(lumbar_lordosis_angle~1, ortho_df))
+
+
+ortho_df_n <- ortho_df %>% 
+  mutate(pelvic_incidence_n = (pelvic_incidence-min(ortho_df$pelvic_incidence))/(max(pelvic_incidence)-min(pelvic_incidence)),
+         pelvic_tilt_n= (pelvic_tilt- min(ortho_df$pelvic_tilt))/(max(ortho_df$pelvic_tilt)-min(ortho_df$pelvic_tilt)),
+         lumbar_lordosis_angle_n = (lumbar_lordosis_angle- min(ortho_df$lumbar_lordosis_angle))/(max(ortho_df$lumbar_lordosis_angle)- min(ortho_df$lumbar_lordosis_angle)), 
+         sacral_slope_n = (sacral_slope-min(ortho_df$sacral_slope))/(max(ortho_df$sacral_slope)- min(ortho_df$sacral_slope)), 
+         pelvic_radius_n =(pelvic_radius - min(ortho_df$pelvic_radius))/(max(ortho_df$pelvic_radius)-min(ortho_df$pelvic_radius)), 
+         degree_spondylolisthesis_n =(degree_spondylolisthesis - min(ortho_df$degree_spondylolisthesis))/(max(ortho_df$degree_spondylolisthesis)-min(ortho_df$degree_spondylolisthesis))
+         )
+
+cluster3_n <- kmeans(ortho_df_n[, c(9,11)], 3, nstart = 25)
+cluster3_n
+table(cluster3$cluster, ortho_df_n$class_3)
+summary(cluster3_n)
+fviz_cluster(cluster3_n, data = ortho_df_n[, c(9,11)])

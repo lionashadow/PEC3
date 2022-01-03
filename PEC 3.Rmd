@@ -23,7 +23,12 @@ library(factoextra)
 
 Para nuestro trabajo hemos elegido la base de datos pública, que hemos encontrado en el sitio web kaggle.com:
 
-https://www.kaggle.com/uciml/biomechanical-features-of-orthopedic-patients
+https://www.kaggle.com/uciml/biomechanical-features-of-orthopedic-patients (data recodida inicialmente de Lichman, M. (2013). UCI Machine Learning Repository [http://archive.ics.uci.edu/ml]. Irvine, CA: University of California, School of Information and Computer Science) 
+
+Hemos eligido este data set por:
+- Una de las problemas frecuentes en la medicina en el ambito contemporaneo es la optimización de recursos donde sea posible. Y una área de aplicación de la analísis es en la etápa del diagnóstico de algunas enfermedades en las etapas tempranas, así por ejemplo, el diagnóstico de la hernia intervertebral exige utilizar la prubas caras y que tardan mucho en realizarse, cuando hay alternativas, que, quizas, no son tan fiables, pero puedan ayudar a la hora de selecionar pacientes para la siguiente etápa de estudios. En este caso se puede hablar de comparación entre estudio con tomografia computarizada vs la resonancia magnética.
+- Es un data-set público y facil de acceder.
+- Es un data-set relativamente límpio y ya preparado para realizar analisis de datos sobre el.
 
 
 # Ejercicio 2
@@ -38,12 +43,12 @@ tabla 1:
 
 Variable|Expicación del variable
 -|-
-pelvic_incidence, numerico | Angulo entre la línea que pasa del centro de la lámina terminal del S1 al centro de las cabezas femorales, y la línea perpendicula a la lámina terminal de S1
-pelvic_tilt, numerico | Angulo entre la línea que pasa del centro de la lámina terminal del S1 al centro de las cabezas femorales y una línea vertical
+pelvic_incidence, numerico en grados | Angulo entre la línea que pasa del centro de la lámina terminal del S1 al centro de las cabezas femorales, y la línea perpendicula a la lámina terminal de S1
+pelvic_tilt, numerico en grados | Angulo entre la línea que pasa del centro de la lámina terminal del S1 al centro de las cabezas femorales y una línea vertical
 lumbar_lordosis_angle, numerico |  angulo entre la lámina terminal superior del L1 y S1
-sacral_sclope, numerico | angulo entre la línea perpendicula a la lámina terminal de S1 y una línea horizontal
-pelvic_radius, numerico | Es un angulo entre la línea vertical y una línea del centro de las cabezas femorales hasta el borde posterior de la lámina terminal de S1
-degree_spondylolysthesis, numerico | distancia de desplazamiento de la vertebrq superior sobre la vertebra inferior (positivo - anterior y negativo - posterior)
+sacral_sclope, numerico en grados | angulo entre la línea perpendicula a la lámina terminal de S1 y una línea horizontal
+pelvic_radius, numerico en grados | Es un angulo entre la línea vertical y una línea del centro de las cabezas femorales hasta el borde posterior de la lámina terminal de S1
+degree_spondylolysthesis, numerico en mm | distancia de desplazamiento de la vertebra superior sobre la vertebra inferior (positivo - anterior y negativo - posterior)
 class | es posible utilizar este variable como character o factor.
 class_2c, factor | Classificación de data como "normal" y "anoraml"
 class_3c, factor | Classificación de data como "normal", "Hernia" y "spondilolistesis"
@@ -104,7 +109,7 @@ De todas las cuestiones que podemos realizar con estos datos, seleccionaremos la
 
 La primera cuestión sería relativa a la comparación de grupos. 
 **Pregunta 1: ¿Existen diferencias significativas entre las variables angulares del grupo "Normal" respecto al grupo "Abnormal" (personas con hernia o con espondilolistesis)?**. En otras palabras, ¿el hecho de tener hernia o espondilolistesis afecta significativamente en alguna de las variables de estudio? 
-Su respuesta nos permitirá discernir qué métodos de medida difieren estadísticamente respecto al grupo "Normal" y llegar a un mejor acercamiento a nivel de diseño de prótesis o clasificación de características de pacientes en bases de datos.
+Su respuesta nos permitirá discernir qué métodos de medida difieren estadísticamente respecto al grupo "Normal" y llegar a un mejor acercamiento a nivel de diseño de prótesis o clasificación de características de pacientes en bases de datos. Ademñas esto podría ayudar a seleccionar a los pacientes para ampliar estudio.
 
 Para resolver esta pregunta compararemos los datos de los grupos a lo largo de este estudio, visualizaremos los estadísticos básicos de nuestra muestra y realizaremos un análisis de varianza (ANOVA) de los grupos (véase los ejercicios 4 y 7).
 
@@ -327,10 +332,27 @@ Efectivamente el grado de espondilolistesis en pacientes con espondilolistesis e
 
 Para realizar la regresión lineal eligiremos las dos variables que parezcan más relacionadas de entre todas las disponibles. Para ver el comportamiento que cada variable tiene con las otras variables del estudio, utilizaremos un gráfico de dispersión de pares de variables (pairs). Nótese que eliminaremos del análisis las dos variables de tipo caracter (class_2 y class_3) debido a que no son numéricas. Para analizar la relación entre variables de forma cuantitativa, calcularemos las correlaciones entre las variables numéricas mediante el comando "cor()".
 
-```{r}
-pairs(ortho_df[, -c(7:8)])
+```{r Interacciones de valores de la base de datos}
+pairs(ortho_df[, -c(7:8)]) # Scatter plot de interacciones de valores numericos
 
-cor(ortho_df[, -c(7:8)])
+cor(ortho_df[, -c(7:8)]) # Correlación de valores entre si
+
+
+# Para que sea más facil interpretar las relaciones entre las variables vamos a crear una visualización de las interacciones en contexto de classificación Normal-Anormal y Normal-Hernia-Espondilolistesis.
+
+model.matrix(~0. + pelvic_incidence+pelvic_tilt+pelvic_radius+sacral_slope+lumbar_lordosis_angle+ degree_spondylolisthesis + class_3, ortho_df) %>%
+  cor() %>% 
+  ggcorrplot(lab=T,
+             lab_size=2.5,
+             type = "lower")
+
+model.matrix(~0. + pelvic_incidence+pelvic_tilt+pelvic_radius+sacral_slope+lumbar_lordosis_angle+ degree_spondylolisthesis + class_3, ortho_df) %>%
+  cor() %>% 
+  ggcorrplot(lab=T,
+             lab_size=2.5,
+             type = "lower")
+
+
 ```
 
 Este último comando nos muestra los coeficientes de correlación entre cada variable, por defecto mediante el método de Pearson. Cuando más próximos a 1 o -1, más relación tienen las dos variables, y por lo tanto, el incremento (en caso de coeficiente positivo) o el decremento (en caso de coeficiente negativo) de una variable influencia al incremento/decremento de la otra variable, respectivamente.
@@ -403,6 +425,8 @@ Para definir un modelo inicial de regresión múltiple, debemos indagar de nuevo
 
 ```{r}
 cor(ortho_df[, -c(7:8)])
+model.matrix(~0. + pelvic_incidence+pelvic_tilt+pelvic_radius+sacral_slope+lumbar_lordosis_angle+ degree_spondylolisthesis, ortho_df) %>%cor() %>% ggcorrplot(lab=T, lab_size=2.5,type = "lower")
+
 ```
 
 En este caso observamos que, a parte de la correlación significativa entre la incidencia pélvica y la pendiente sacral observada anteriormente, existen asociaciones con coeficientes de correlación elevados.
@@ -420,11 +444,15 @@ Realizamos el modelo de regresión de la incidencia pélvica con las cinco varia
 ortho_modelomu<-lm(pelvic_incidence~pelvic_tilt+lumbar_lordosis_angle+sacral_slope+pelvic_radius+degree_spondylolisthesis, data=ortho_df)
 
 summary(ortho_modelomu)
+
+
+step(ortho_modelomu, direction = "both", trace = 1) # se puede utilizar el con el criterio de Akaike (mejor cuando es inferior)
+
 ```
 
-El "summary" del modelo nos informa de la significación de la correlación de nuestra variable objetivo (incidencia pélvica) con cada otra variable. Obsérvese que los coeficientes significativos son únicamente con la inclinación pélvica (pelvic_tilt), con p-valor inferior a 2e-16, y con la pendiente sacral (sacral_slope), con p-valor inferior a 2e-16. Los asteriscos nos informan visualmente de que éstas son las únicas dos variables con correlaciones significativas para la incidencia pélvica.
+El "summary" del modelo nos informa de la significación de la correlación de nuestra variable objetivo (incidencia pélvica) con cada otra variable. Obsérvese que los coeficientes significativos son únicamente con la inclinación pélvica (pelvic_tilt), con p-valor inferior a 2e^-16, y con la pendiente sacral (sacral_slope), con p-valor inferior a 2e-16. Los asteriscos nos informan visualmente de que éstas son las únicas dos variables con correlaciones significativas para la incidencia pélvica.
 
-Además, nos otorga el coeficiente de determinación (R-squared) del modelo, siendo éste el máximo (1). Esta información parece sospechosa, pues en biología es difícil obtener un coeficiente de determinación total, pero si nos fijamos en el p-valor del modelo, observamos que éste es significativo (inferior a 2.2e-16). Ésto nos verifica que la bondad del modelo de regresión es muy positiva y que, por lo tanto, podemos fiarnos a nivel estadístico de éste. En otras palabras, toda la variabilidad de la variable en cuestión (incidencia pélvica) viene dada por otras variables del estudio.
+Además, nos otorga el coeficiente de determinación (R-squared) del modelo, siendo éste el máximo (1). Esta información parece sospechosa, pues en biología es difícil obtener un coeficiente de determinación total, pero si nos fijamos en el p-valor del modelo, observamos que éste es significativo (inferior a 2.2e^-16). Ésto nos verifica que la bondad del modelo de regresión es muy positiva y que, por lo tanto, podemos fiarnos a nivel estadístico de éste. En otras palabras, toda la variabilidad de la variable en cuestión (incidencia pélvica) viene dada por otras variables del estudio.
 
 Ahora que sabemos que nuestras variables predictoras para la incidencia pélvica son la pendiente sacral y la inclinación pélvica, perfeccionaremos el modelo de regresión.
 
@@ -445,34 +473,60 @@ Por lo tanto, parece lógico que estas tres variables tengan una correlación po
 
 # Ejerecicio 7:
 - Complementando el apartado anterior, elaborar un análisis ANOVA de dos conjuntos de variables (LAB5 y Ejercicio 6 de la PEC2). La elección de las variables, los resultados, así como su relación deben de estar correctamente justificada. Además, realizar una prueba cluster de las variables, y si existe un fuerte agrupamiento, elaborar un dendograma (LAB5).
+
+Para decidir si se puede utuilizar el test ANOVA, tenemos que confirmar inialmente si las variables sigue la distribución normal y si la variable no es homoscedastica (tiene la misma varianza).
 ```{r Evaluación de la normalidad y homogenidad de variables}
 
-### En todos grupos
+# Empezamos mmirando a las variables y calculando valores medias y error estandart. 
 ortho_df2 %>% group_by(type_of_measure) %>% summarise("Mean of angle" = mean(angles), "Standart deviation" = sd(angles))
-
 ortho_df2 %>%  summarise("Mean of displacement" = mean(degree_spondylolisthesis), "SD of displacement" = sd(degree_spondylolisthesis))
 
-
+# Creamos la visualización de la distribución de las variables con boxplot, marcando valores médias. En la ditribución normal valor media y valor mediana y moda coinciden. Por la visualización, parece que la variable pelvic_radius y la sacral_slope pueden seguir la distribución normal.
 ortho_df2 %>% ggplot(aes(y= angles, x = type_of_measure, fill = type_of_measure)) +
-  geom_boxplot() + stat_summary(fun =mean, shape = 18, size = 1)
+  geom_boxplot() + stat_summary(fun = mean,
+                                shape = 18,
+                                size = 1) + 
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank())
 
-ortho_df2 %>% ggplot(aes(y= degree_spondylolisthesis, x = 0)) +
-  geom_boxplot(fill = "red", alpha = 0.4) +
-  stat_summary(fun = mean, shape = 18, size =1)
+ortho_df2 %>% ggplot(aes(y= degree_spondylolisthesis,
+                         x = 0)) +
+  geom_boxplot(fill = "red",
+               alpha = 0.4) +
+  stat_summary(fun = mean, shape = 18,
+               size =1)+ 
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank())
 
-### En grupos por 2 classificaciones
+# Vamos a mirar si el hecho de pertenecer a una o otra classficiación influe al tipo de la distribución
 ortho_df2 %>% group_by(type_of_measure, class_2) %>%
   summarise("Mean of angle" = mean(angles), "Standart deviation" = sd(angles))
 ortho_df2 %>% group_by(class_2) %>%
   summarise("Mean of displacement" = mean(degree_spondylolisthesis), "SD of displacement" = sd(degree_spondylolisthesis))
 
-ortho_df2 %>% ggplot(aes(x =class_2, y= degree_spondylolisthesis, color = class_2)) +
-  geom_boxplot() +
-  stat_summary(fun.y = mean, geom = "point", shape = 18, size = 5)
+ortho_df2 %>% ggplot(aes(x =0,
+                         y= degree_spondylolisthesis,
+                         fill= class_2),
+                     color = black) +
+  geom_boxplot(alpha = 0.6,
+               aes(fill = class_2)) +
+  stat_summary(fun.y = mean,
+               geom = "point",
+               shape = 18, size = 5, 
+               aes(color = class_2))+
+  facet_wrap(~class_2)+ 
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank())
 
-ortho_df2 %>% ggplot(aes(y= angles, x = class_2, color = type_of_measure)) +
-  geom_boxplot() +
-  stat_summary(fun.y = mean, geom = "point", shape = 18, size = 5)
+ortho_df2 %>% ggplot(aes(y= angles, x = type_of_measure), color = "black") +
+  geom_boxplot(alpha = 0.3, aes(fill = type_of_measure)) +
+  stat_summary(fun.y = mean,
+               geom = "point",
+               shape = 18, size = 4,
+               aes(color = type_of_measure))+
+  facet_wrap(~class_2)+ 
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank())
 
 ### En grupos por 3 classificaciones
 ortho_df2 %>% group_by(type_of_measure, class_3) %>% 
@@ -481,91 +535,152 @@ ortho_df2 %>% group_by(type_of_measure, class_3) %>%
 ortho_df2 %>% group_by(class_3) %>%  
   summarise("Mean of displacement" = mean(degree_spondylolisthesis), "SD of displacement" = sd(degree_spondylolisthesis))
 
-ortho_df2 %>% ggplot(aes(x =class_3, y= degree_spondylolisthesis, color = class_3)) +
-  geom_boxplot() +
-  stat_summary(fun.y = mean, geom = "point", shape = 18, size = 5)
+ortho_df2 %>% ggplot(aes(x = 0, y= degree_spondylolisthesis), color = black) +
+  geom_boxplot(alpha = 0.4, aes(fill = class_3)) +
+  stat_summary(fun.y = mean, geom = "point", shape = 18, size = 5, aes(color = class_3))+ facet_wrap(~class_3)+ 
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank())
 
-ortho_df2 %>% ggplot(aes(y= angles,x =class_3,color = type_of_measure)) +
-  geom_boxplot() + 
-  stat_summary(fun.y = mean, geom = "point", shape = 18, size = 5)
+ortho_df2 %>% ggplot(aes(y= angles, x = type_of_measure), color = "black") +
+  geom_boxplot(alpha = 0.3, aes(fill = type_of_measure)) +
+  stat_summary(fun.y = mean, 
+               geom = "point", shape = 18,
+               size = 4, 
+               aes(color = type_of_measure)) +
+  facet_wrap(~class_3)+ 
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank())
 
-## Normality tests
-### Kolmogorov-Smirnov
+# Normality tests: Ahora vamos a comprobar si la distribución de las variables realmente sigue la distribución normal. Para esto vamos a utilizar el test de Kolmogorov-Smirnov, y la visualización con QQ-plot
 
-ortho_df %>% select(where(is.numeric))%>% colnames() %>%
-  set_names() %>%  map(~ lillie.test(ortho_df[,.])) %>%
-  map_dfr(., tidy, .id = "variable")
+# Kolmogorov-Smirnov
+# Para realizar este test sobre el conjunto de data vamos a utilizar función map - una varang de lapply() dentro del paquete tidyverse (libreria purr)
 
-### Shapiro
-ortho_df %>% select(where(is.numeric))%>% colnames() %>%
-  set_names() %>%  map(~ shapiro.test(ortho_df[,.x])) %>%
+ortho_df %>% 
+  select(where(is.numeric))%>% 
+  colnames() %>%
+  set_names() %>% 
+  map(~ lillie.test(ortho_df[,.])) %>%
   map_dfr(., tidy, .id = "variable")
 
 ### QQplot
+
 ggqqplot(ortho_df2, "angles", facet.by = "class_3", color = "type_of_measure")
 ggqqplot(ortho_df2, "angles", facet.by = "class_2", color = "type_of_measure")
-ggqqplot(ortho_df2, "degree_spondylolisthesis", color = "class_3", facet.by  = "class_2")
+ggqqplot(ortho_df2, "degree_spondylolisthesis", color = "class_2", facet.by  = "class_2")
+ggqqplot(ortho_df2, "degree_spondylolisthesis", color = "class_3", facet.by  = "class_3")
 
-### Homogenidad
-ortho_df %>% select(where(is.numeric))%>% colnames() %>%
-  set_names() %>%  map(~ fligner.test(ortho_df[,.] ~ class_2, data = ortho_df)) %>%
+### Homogenidad - vamos a mirar si la data es homogénea
+ortho_df %>% 
+  select(where(is.numeric))%>% 
+  colnames() %>%
+  set_names() %>%  
+  map(~ fligner.test(ortho_df[,.] ~ class_2, data = ortho_df)) %>%
+  map_dfr(., tidy, .id = "variable")
+
+ortho_df %>% 
+  select(where(is.numeric))%>% 
+  colnames() %>%
+  set_names() %>%  
+  map(~ fligner.test(ortho_df[,.] ~ class_3, data = ortho_df)) %>%
   map_dfr(., tidy, .id = "variable")
 
 ```
   
 ## Anova test:
- Tras realizar varios tests de normalidad se confirma que la distribución de data NO es normal, asi que procedemos a realizar tests ANOVA, con la idéa en mente de que la distribución puede ser no suficientemente normal para conseguir resultados fiables. El test de homogenidad de data sugiere NO-homogenidad de data.
+ Tras realizar varios tests de normalidad se confirma que la distribución de data NO es normal, asi que procedemos a realizar tests ANOVA, con la idéa en mente de que la distribución puede ser insuficientemente normal para conseguir resultados fiables. El test de homogenidad de data sugiere NO-homogenidad de data.
  
 ```{r test Anova}
+# Realizoms el test de anova para diferentes variables.
 anova_PI <- aov(pelvic_incidence~class_3, ortho_df)
 anova_S <- aov(degree_spondylolisthesis~class_3, ortho_df)
 anova_PR <- aov(pelvic_radius~class_3, ortho_df)
 anova_LLA <- aov(lumbar_lordosis_angle~class_3, ortho_df)
-
+# La relación de las medias entre gurpos para la incidencia pélvica
 par(mfrow=c(2,2))
 plot(anova_PI)
 par(mfrow=c(1,1))
 plot(TukeyHSD(anova_PI))
+# La relación de las medias entre gurpos para el grado de espondilolistesis
 par(mfrow=c(2,2))
 plot(anova_S)
 par(mfrow=c(1,1))
 plot(TukeyHSD(anova_S))
+# La relación de las medias entre gurpos para angulo del radius de pelvis
 par(mfrow=c(2,2))
 plot(anova_PR)
 par(mfrow=c(1,1))
 plot(TukeyHSD(anova_PR))
-
+# La relación de las medias entre gurpos para el angulo del lordosis lumbar
 par(mfrow=c(2,2))
 plot(anova_LLA)
-plot(TukeyHSD(anova_LLA))
 par(mfrow=c(1,1))
+plot(TukeyHSD(anova_LLA))
 
 ``` 
+Los tests sugieren que la diferencia de los valores medias de algunas variables se difiere de forma significativa entre  algunos grupos.
+
+Variable | Relacion
+-|-
+pelvic_incidence | NO varia entre el grupo normal y la hernia, pero varia en comparación con el grupo espondilolistesis
+degree_spondylolisthesis | NO varia entre el grupo normal y la hernia, pero varia en comparación con el grupo espondilolistesis
+pelvic_radius| NO varia entre el grupo espondilolistesis y la hernia, pero varia en comparación con el grupo espondilolistesis y el grupo normal
+lumbar_lordosis_angle | Varia de forma importante entre los tres grupos.
+
+
 
 ```{r analisis de Cluster}
-
+ #evaluamos un scatter plot para evaluar presencia de algun tipo de aglomeración.
 ortho_df %>% ggplot(aes(lumbar_lordosis_angle, pelvic_incidence, color = class_3)) +
   geom_point()
 ortho_df %>% ggplot(aes(lumbar_lordosis_angle, pelvic_incidence, color = class_2)) +
   geom_point()
+
+# Miramos si se puede identificar algún numero de cluster
 fviz_nbclust(ortho_df[,c(1,3)], kmeans, method = "wss")
 fviz_nbclust(ortho_df[,c(1,3)], kmeans, method = "silhouette")
+
+# Probamos classificar las valores segun la distancia entre los puntos del scatter plot para entre 2 y 3 clusteres
 
 cluster2 <- kmeans(ortho_df[, c(1,3)], 2, nstart = 25)
 table(cluster2$cluster, ortho_df$class_2)
 summary(cluster2)
 fviz_cluster(cluster2, data = ortho_df[, c(1,3)])
+cluster2 # Se evidencia que la classificación entre 2 clusteres es bastente complicada y la busqueda de algomeraciones por distancia no ha sido muy eficaz, y se acierta solo en 61.4% de casos.
+
 
 cluster3 <- kmeans(ortho_df[, c(1,3)], 3, nstart = 25)
 table(cluster3$cluster, ortho_df$class_3)
 summary(cluster3)
 fviz_cluster(cluster3, data = ortho_df[, c(1,3)])
+cluster3 # y la clasterización en 3 clusteres se acierta en 74.1% de casos.
 
 
 
+# Para mejorar nuestres reslutados, se puede probar normalizar el data frame
+ortho_df_n <- ortho_df %>% 
+  mutate(pelvic_incidence_n = (pelvic_incidence-min(ortho_df$pelvic_incidence))/(max(pelvic_incidence)-min(pelvic_incidence)),
+         pelvic_tilt_n= (pelvic_tilt- min(ortho_df$pelvic_tilt))/(max(ortho_df$pelvic_tilt)-min(ortho_df$pelvic_tilt)),
+         lumbar_lordosis_angle_n = (lumbar_lordosis_angle- min(ortho_df$lumbar_lordosis_angle))/(max(ortho_df$lumbar_lordosis_angle)- min(ortho_df$lumbar_lordosis_angle)), 
+         sacral_slope_n = (sacral_slope-min(ortho_df$sacral_slope))/(max(ortho_df$sacral_slope)- min(ortho_df$sacral_slope)), 
+         pelvic_radius_n =(pelvic_radius - min(ortho_df$pelvic_radius))/(max(ortho_df$pelvic_radius)-min(ortho_df$pelvic_radius)), 
+         degree_spondylolisthesis_n =(degree_spondylolisthesis - min(ortho_df$degree_spondylolisthesis))/(max(ortho_df$degree_spondylolisthesis)-min(ortho_df$degree_spondylolisthesis))
+         )
+
+cluster3_n <- kmeans(ortho_df_n[, c(9,11)], 3, nstart = 25)
+table(cluster3$cluster, ortho_df_n$class_3)
+summary(cluster3_n)
+fviz_cluster(cluster3_n, data = ortho_df_n[, c(9,11)])
+
+cluster3_n # Llegamos a mejorar nuestro resultados un poquito, acertando con nuestrea classificación en 74.2%.
+
+# otra forma de realizar analisis de cluster en estos casos es clusterización hierárchica
 cluster <- hclust(dist(ortho_df), method="complete")
 plot(cluster)
 pltree(agnes(ortho_df, method = "complete"))
 
 ``` 
+
+
+
 
