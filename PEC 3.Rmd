@@ -481,7 +481,14 @@ Para decidir si se puede utuilizar el test ANOVA, tenemos que confirmar inialmen
 ortho_df2 %>% group_by(type_of_measure) %>% summarise("Mean of angle" = mean(angles), "Standart deviation" = sd(angles))
 ortho_df2 %>%  summarise("Mean of displacement" = mean(degree_spondylolisthesis), "SD of displacement" = sd(degree_spondylolisthesis))
 
-# Creamos la visualización de la distribución de las variables con boxplot, marcando valores médias. En la ditribución normal valor media y valor mediana y moda coinciden. Por la visualización, parece que la variable pelvic_radius y la sacral_slope pueden seguir la distribución normal.
+# Creamos la visualización de la distribución de las variables con denisity plot y con boxplot, marcando valores médias. En la ditribución normal valor media y valor mediana y moda coinciden. Por la visualización, parece que la variable pelvic_radius y la sacral_slope pueden seguir la distribución normal.
+
+pt <- ortho_df2 %>% ggplot(aes(angles, fill = type_of_measure)) + geom_density(alpha = 0.2)
+ptc2 <- ortho_df2 %>% ggplot(aes(angles, fill = type_of_measure)) + geom_density(alpha = 0.2)+ facet_grid(~class_2)
+ptc3 <- ortho_df2 %>% ggplot(aes(angles, fill = type_of_measure)) + geom_density(alpha = 0.2)+ facet_grid(~class_3)
+pp <- list(pt,ptc2,ptc3)
+ggarrange(nrow = 3, ncol= 1, plotlist = pp)
+
 ortho_df2 %>% ggplot(aes(y= angles, x = type_of_measure, fill = type_of_measure)) +
   geom_boxplot() + stat_summary(fun = mean,
                                 shape = 18,
@@ -656,30 +663,14 @@ fviz_cluster(cluster3, data = ortho_df[, c(1,3)])
 cluster3 # y la clasterización en 3 clusteres se acierta en 74.1% de casos.
 
 
-
-# Para mejorar nuestres reslutados, se puede probar normalizar el data frame
-ortho_df_n <- ortho_df %>% 
-  mutate(pelvic_incidence_n = (pelvic_incidence-min(ortho_df$pelvic_incidence))/(max(pelvic_incidence)-min(pelvic_incidence)),
-         pelvic_tilt_n= (pelvic_tilt- min(ortho_df$pelvic_tilt))/(max(ortho_df$pelvic_tilt)-min(ortho_df$pelvic_tilt)),
-         lumbar_lordosis_angle_n = (lumbar_lordosis_angle- min(ortho_df$lumbar_lordosis_angle))/(max(ortho_df$lumbar_lordosis_angle)- min(ortho_df$lumbar_lordosis_angle)), 
-         sacral_slope_n = (sacral_slope-min(ortho_df$sacral_slope))/(max(ortho_df$sacral_slope)- min(ortho_df$sacral_slope)), 
-         pelvic_radius_n =(pelvic_radius - min(ortho_df$pelvic_radius))/(max(ortho_df$pelvic_radius)-min(ortho_df$pelvic_radius)), 
-         degree_spondylolisthesis_n =(degree_spondylolisthesis - min(ortho_df$degree_spondylolisthesis))/(max(ortho_df$degree_spondylolisthesis)-min(ortho_df$degree_spondylolisthesis))
-         )
-
-cluster3_n <- kmeans(ortho_df_n[, c(9,11)], 3, nstart = 25)
-table(cluster3$cluster, ortho_df_n$class_3)
-summary(cluster3_n)
-fviz_cluster(cluster3_n, data = ortho_df_n[, c(9,11)])
-
-cluster3_n # Llegamos a mejorar nuestro resultados un poquito, acertando con nuestrea classificación en 74.2%.
-
 # otra forma de realizar analisis de cluster en estos casos es clusterización hierárchica
 cluster <- hclust(dist(ortho_df), method="complete")
 plot(cluster)
 pltree(agnes(ortho_df, method = "complete"))
 
 ``` 
+
+# Ejercicio 8
 
 
 
