@@ -47,9 +47,12 @@ model.matrix(~0. + pelvic_incidence+pelvic_tilt+pelvic_radius+sacral_slope+lumba
 model.matrix(~0. + pelvic_incidence+pelvic_tilt+pelvic_radius+sacral_slope+lumbar_lordosis_angle+ degree_spondylolisthesis + class_3, ortho_df) %>%cor() %>% ggcorrplot(lab=T, lab_size=2.5,type = "lower")
 
 # Visualization part
-
-ortho_df2 %>% ggplot(aes(angles, fill = type_of_measure)) + geom_density(alpha = 0.2)+ facet_grid(~class_2)
-ortho_df2 %>% ggplot(aes(angles, fill = type_of_measure)) + geom_density(alpha = 0.2)+ facet_grid(~class_3)
+ggarrange(nrow = 3, ncol= 1)
+pt <- ortho_df2 %>% ggplot(aes(angles, fill = type_of_measure)) + geom_density(alpha = 0.2)
+ptc2 <- ortho_df2 %>% ggplot(aes(angles, fill = type_of_measure)) + geom_density(alpha = 0.2)+ facet_grid(~class_2)
+ptc3 <- ortho_df2 %>% ggplot(aes(angles, fill = type_of_measure)) + geom_density(alpha = 0.2)+ facet_grid(~class_3)
+pp <- list(pt,ptc2,ptc3)
+ggarrange(nrow = 3, ncol= 1, plotlist = pp)
 ortho_df2 %>% ggplot(aes(y= angles, color = type_of_measure)) + geom_boxplot() + facet_grid(~class_2)
 ortho_df2 %>% ggplot(aes(y= angles, color = type_of_measure)) + geom_boxplot() + facet_grid(~class_3)
 ortho_df2 %>% ggplot(aes(x= angles,y = degree_spondylolisthesis,  color = type_of_measure)) + geom_point() + facet_grid(~class_2)
@@ -58,7 +61,7 @@ ortho_df2 %>% ggplot(aes(x =class_3, y= degree_spondylolisthesis, color = type_o
 ortho_df2 %>% ggplot(aes(x =class_2, y= degree_spondylolisthesis, color = type_of_measure)) + geom_boxplot()
 # Normality test
 
-## Kolmogorov-Smirnov
+## Kolmogorov-Smirnov 
 
 ortho_df %>% select(where(is.numeric))%>% colnames() %>%
   set_names() %>%  map(~ ks.test(ortho_df[,.x], "pnorm")) %>%
@@ -244,3 +247,17 @@ cluster3_n
 table(cluster3$cluster, ortho_df_n$class_3)
 summary(cluster3_n)
 fviz_cluster(cluster3_n, data = ortho_df_n[, c(9,11)])
+
+
+
+ortho_df2 %>% ggplot(aes(y= angles, x = type_of_measure, fill = type_of_measure)) +
+  geom_boxplot() + 
+  stat_summary(fun = mean,
+                                shape = 18,
+                                size = 1)+ 
+  stat_summary(fun = mean,
+               fun.min = function(x) {mean(x) - sd(x)},
+               fun.max =function(x) {mean(x) + sd(x)},
+               geom = "errorbar")+ 
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank())
