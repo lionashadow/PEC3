@@ -38,7 +38,7 @@ ortho_df <- ortho_df %>% mutate("class_2" = factor(ortho_df$`class_2`, levels = 
 ortho_df <- ortho_df %>% mutate("class_3" = factor(ortho_df$`class_3`, levels = c("Normal", "Hernia", "Spondylolisthesis")))
 ortho_df2 <- ortho_df %>% pivot_longer(cols = c(pelvic_incidence, pelvic_tilt, pelvic_radius, sacral_slope, lumbar_lordosis_angle), names_to = "type_of_measure", values_to = "angles") %>% select(type_of_measure, angles, everything())
 ortho_df3 <- ortho_df %>% filter(degree_spondylolisthesis<400) 
-
+ortho_df4 <- ortho_df3 %>% pivot_longer(cols = c(pelvic_incidence, pelvic_tilt, pelvic_radius, sacral_slope, lumbar_lordosis_angle), names_to = "type_of_measure", values_to = "angles") %>% select(type_of_measure, angles, everything())
 summary(ortho_df)
 summary(sapply(ortho_df,is.na))
 
@@ -261,3 +261,193 @@ ortho_df2 %>% ggplot(aes(y= angles, x = type_of_measure, fill = type_of_measure)
                geom = "errorbar")+ 
   theme(axis.ticks.x = element_blank(),
         axis.text.x = element_blank())
+
+
+
+ax <- ortho_df2 %>% ggplot(aes(y= angles, x = type_of_measure, fill = type_of_measure)) +
+  geom_boxplot() + stat_summary(fun = mean,
+                                shape = 18,
+                                size = 1) + 
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank())
+ax2 <- ortho_df2 %>% ggplot(aes(y= angles, x = type_of_measure), color = "black") +
+  geom_boxplot(alpha = 0.3, aes(fill = type_of_measure)) +
+  stat_summary(fun.y = mean,
+               geom = "point",
+               shape = 18, size = 4,
+               aes(color = type_of_measure))+
+  facet_wrap(~class_2)+ 
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank())
+
+ax3 <- ortho_df2 %>% ggplot(aes(y= angles, x = type_of_measure), color = "black") +
+  geom_boxplot(alpha = 0.3, aes(fill = type_of_measure)) +
+  stat_summary(fun.y = mean, 
+               geom = "point", shape = 18,
+               size = 4, 
+               aes(color = type_of_measure)) +
+  facet_wrap(~class_3)+ 
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank())
+axds <- list(ax,ax2,ax3)
+ggarrange(nrow = 3, ncol= 1, plotlist = axds)
+
+
+dx <- ortho_df2 %>% ggplot(aes(y= degree_spondylolisthesis,
+                               x = 0)) +
+  geom_boxplot(fill = "red",
+               alpha = 0.4) +
+  stat_summary(fun = mean, shape = 18,
+               size =1)+ 
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank())
+
+dx2 <- ortho_df2 %>% ggplot(aes(x =0,
+                                y= degree_spondylolisthesis,
+                                fill= class_2),
+                            color = black) +
+  geom_boxplot(alpha = 0.6,
+               aes(fill = class_2)) +
+  stat_summary(fun.y = mean,
+               geom = "point",
+               shape = 18, size = 5, 
+               aes(color = class_2))+
+  facet_wrap(~class_2)+ 
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank())
+
+
+dx3 <- ortho_df2 %>% ggplot(aes(x = 0, y= degree_spondylolisthesis), color = black) +
+  geom_boxplot(alpha = 0.4, aes(fill = class_3)) +
+  stat_summary(fun.y = mean, geom = "point", shape = 18, size = 5, aes(color = class_3))+ facet_wrap(~class_3)+ 
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank())
+dxds <- list(dx,dx2,dx3)
+ggarrange(nrow = 3, ncol= 1, plotlist = dxds)
+
+
+
+ortho_df %>% group_by(class_2) %>%
+  summarise("Mean PI" = mean(pelvic_incidence),
+            "SD PI" = sd(pelvic_incidence), 
+            "Mean PT" = mean(pelvic_tilt),
+            "SD PT" = sd(pelvic_tilt), 
+            "Mean LLA" = mean(lumbar_lordosis_angle),
+            "SD LLA" = sd(lumbar_lordosis_angle),
+            "Mean SS" = mean(sacral_slope),
+            "SD SS" = sd(sacral_slope), 
+            "Mean PR" = mean(pelvic_radius), 
+            "SD PR" = sd(pelvic_radius),
+            "Mean DS" = mean(degree_spondylolisthesis),
+            "SD DS" = sd(degree_spondylolisthesis))
+
+
+ortho_df %>% group_by(class_3) %>%
+  summarise("Mean PI" = mean(pelvic_incidence),
+            "SD PI" = sd(pelvic_incidence), 
+            "Mean PT" = mean(pelvic_tilt),
+            "SD PT" = sd(pelvic_tilt), 
+            "Mean LLA" = mean(lumbar_lordosis_angle),
+            "SD LLA" = sd(lumbar_lordosis_angle),
+            "Mean SS" = mean(sacral_slope),
+            "SD SS" = sd(sacral_slope), 
+            "Mean PR" = mean(pelvic_radius), 
+            "SD PR" = sd(pelvic_radius),
+            "Mean DS" = mean(degree_spondylolisthesis),
+            "SD DS" = sd(degree_spondylolisthesis))
+stat_summary(stat_summary(fun = mean, geom = "point", shape = 18, size = 5, aes(y = degree_spondylolisthesis)))+
+  stat_summary(aes(y = degree_spondylolisthesis),
+               fun = mean,
+               fun.min = function(x) {mean(x) - sd(x)},
+               fun.max =function(x) {mean(x) + sd(x)},
+               geom = "errorbar")
+
+stat_summary(mapping = aes(x = 0, y=degree_spondylolisthesis), 
+             color = "green",
+             fun = mean,
+             shape = 18,
+             size = 1)+ 
+  stat_summary(mapping = aes(x = 0, y=degree_spondylolisthesis), 
+               color = "green",
+               fun = mean,
+               fun.min = function(x) {mean(x) - sd(x)},
+               fun.max =function(x) {mean(x) + sd(x)},
+               geom = "errorbar")
+
+angles_ms <- ortho_df2 %>% ggplot(aes(y= angles, x = type_of_measure, color = type_of_measure)) +
+  stat_summary(fun = mean,
+               shape = 18,
+               size = 1)+ 
+  stat_summary(fun = mean,
+               fun.min = function(x) {mean(x) - sd(x)},
+               fun.max =function(x) {mean(x) + sd(x)},
+               geom = "errorbar")+ 
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank())
+  
+angles_ms2 <- ortho_df2 %>% ggplot(aes(y= angles, x = type_of_measure, color = type_of_measure)) +
+  stat_summary(fun = mean,
+               shape = 18,
+               size = 1)+ 
+  stat_summary(fun = mean,
+               fun.min = function(x) {mean(x) - sd(x)},
+               fun.max =function(x) {mean(x) + sd(x)},
+               geom = "errorbar")+ 
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank()) +
+  facet_wrap(~class_2)
+
+angles_ms3 <- ortho_df2 %>% ggplot(aes(y= angles, x = type_of_measure, color = type_of_measure)) +
+  stat_summary(fun = mean,
+               shape = 18,
+               size = 1)+ 
+  stat_summary(fun = mean,
+               fun.min = function(x) {mean(x) - sd(x)},
+               fun.max =function(x) {mean(x) + sd(x)},
+               geom = "errorbar")+ 
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank()) +
+  facet_wrap(~class_3)
+
+degree_ms <- ortho_df2 %>% ggplot(aes(y= degree_spondylolisthesis, x = 0)) +
+  stat_summary(fun = mean,
+               shape = 18,
+               size = 1,
+               color = "green")+ 
+  stat_summary(fun = mean,
+               fun.min = function(x) {mean(x) - sd(x)},
+               fun.max =function(x) {mean(x) + sd(x)},
+               color = "green",
+               geom = "errorbar")+ 
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank())
+
+degree_ms2 <- ortho_df2 %>% ggplot(aes(y= degree_spondylolisthesis, x = class_2, color = class_2)) +
+  stat_summary(fun = mean,
+               shape = 18,
+               size = 1)+ 
+  stat_summary(fun = mean,
+               fun.min = function(x) {mean(x) - sd(x)},
+               fun.max =function(x) {mean(x) + sd(x)},
+               geom = "errorbar")+ 
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank())  +
+  facet_wrap(~class_2)
+
+degree_ms3 <- ortho_df2 %>% ggplot(aes(y= degree_spondylolisthesis, x = class_3, color = class_3)) +
+  stat_summary(fun = mean,
+               shape = 18,
+               size = 1)+ 
+  stat_summary(fun = mean,
+               fun.min = function(x) {mean(x) - sd(x)},
+               fun.max =function(x) {mean(x) + sd(x)},
+               geom = "errorbar")+ 
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank()) +
+  facet_wrap(~class_3)
+
+ggarrange(plotlist= list(angles_ms,degree_ms, angles_ms2, degree_ms2, angles_ms3, degree_ms3) , nrow= 3, ncol = 2, legend = "bottom")
+
+
+
+

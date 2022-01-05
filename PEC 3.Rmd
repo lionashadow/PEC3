@@ -107,7 +107,7 @@ ortho_df2 <- ortho_df %>%
   pivot_longer(cols = c(pelvic_incidence, pelvic_tilt, pelvic_radius, sacral_slope, lumbar_lordosis_angle),
                names_to = "type_of_measure", values_to = "angles") %>% 
   select(type_of_measure, angles, everything())
-ortho_df3 <- ortho_df %>% filter(degree_spondylolisthesis<400) # limpiamos el data.frame de un valor evidentemente erroneo (degrre_spondilolistesis = 418 mm)
+ortho_df3 <- ortho_df %>% filter(degree_spondylolisthesis<400) # limpiamos la data.frame de un valor evidentemente erroneo (degrre_spondilolistesis = 418 mm)
 ```
 
 # Ejercicio 3: 
@@ -409,51 +409,117 @@ ptc3 <- ortho_df2 %>% ggplot(aes(angles, fill = type_of_measure)) + geom_density
 pp <- list(pt,ptc2,ptc3)
 ggarrange(nrow = 3, ncol= 1, plotlist = pp)
 
-ortho_df2 %>% ggplot(aes(y= angles, x = type_of_measure, fill = type_of_measure)) +
-  geom_boxplot() + stat_summary(fun = mean,
-                                shape = 18,
-                                size = 1) + 
-  theme(axis.ticks.x = element_blank(),
-        axis.text.x = element_blank())
-
 pds <- ortho_df2 %>% ggplot(aes(degree_spondylolisthesis)) + geom_density(alpha = 0.2, fill = "darkgreen")
 pds2 <- ortho_df2 %>% ggplot(aes(degree_spondylolisthesis, fill = class_2)) + geom_density(alpha = 0.2)+ facet_grid(~class_2)
 pds3 <- ortho_df2 %>% ggplot(aes(degree_spondylolisthesis, fill = class_3)) + geom_density(alpha = 0.2)+ facet_grid(~class_3)
 ppds <- list(pds,pds2,pds3)
 ggarrange(nrow = 3, ncol= 1, plotlist = ppds)
 
-ortho_df2 %>% ggplot(aes(y= degree_spondylolisthesis,
-                         x = 0)) +
-  geom_boxplot(fill = "red",
-               alpha = 0.4) +
-  stat_summary(fun = mean, shape = 18,
-               size =1)+ 
-  theme(axis.ticks.x = element_blank(),
-        axis.text.x = element_blank())
-
-
+# Evaluamos las valores medias y del error estandar segun la classificación:
+# Segun class_2
 ortho_df2 %>% group_by(type_of_measure, class_2) %>%
   summarise("Mean of angle" = mean(angles), "Standart deviation" = sd(angles))
 ortho_df2 %>% group_by(class_2) %>%
   summarise("Mean of displacement" = mean(degree_spondylolisthesis), "SD of displacement" = sd(degree_spondylolisthesis))
+# Según class_3
+ortho_df2 %>% group_by(type_of_measure, class_3) %>% 
+  summarise("Mean of angle" = mean(angles), "Standart deviation" = sd(angles))
+ortho_df2 %>% group_by(class_3) %>%  
+  summarise("Mean of displacement" = mean(degree_spondylolisthesis), "SD of displacement" = sd(degree_spondylolisthesis))
 
-ortho_df2 %>% ggplot(aes(x =0,
-                         y= degree_spondylolisthesis,
-                         fill= class_2),
-                     color = black) +
-  geom_boxplot(alpha = 0.6,
-               aes(fill = class_2)) +
-  stat_summary(fun.y = mean,
-               geom = "point",
-               shape = 18, size = 5, 
-               aes(color = class_2))+
-  facet_wrap(~class_2)+ 
+# Creamos la visualización de valores médias y error estandar de las variables.
+angles_ms <- ortho_df2 %>% ggplot(aes(y= angles, x = type_of_measure, color = type_of_measure)) +
+  stat_summary(fun = mean,
+               shape = 18,
+               size = 1)+ 
+  stat_summary(fun = mean,
+               fun.min = function(x) {mean(x) - sd(x)},
+               fun.max =function(x) {mean(x) + sd(x)},
+               geom = "errorbar")+ 
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank())
+  
+angles_ms2 <- ortho_df2 %>% ggplot(aes(y= angles, x = type_of_measure, color = type_of_measure)) +
+  stat_summary(fun = mean,
+               shape = 18,
+               size = 1)+ 
+  stat_summary(fun = mean,
+               fun.min = function(x) {mean(x) - sd(x)},
+               fun.max =function(x) {mean(x) + sd(x)},
+               geom = "errorbar")+ 
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank()) +
+  facet_wrap(~class_2)
+
+angles_ms3 <- ortho_df2 %>% ggplot(aes(y= angles, x = type_of_measure, color = type_of_measure)) +
+  stat_summary(fun = mean,
+               shape = 18,
+               size = 1)+ 
+  stat_summary(fun = mean,
+               fun.min = function(x) {mean(x) - sd(x)},
+               fun.max =function(x) {mean(x) + sd(x)},
+               geom = "errorbar")+ 
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank()) +
+  facet_wrap(~class_3)
+
+degree_ms <- ortho_df2 %>% ggplot(aes(y= degree_spondylolisthesis, x = 0)) +
+  stat_summary(fun = mean,
+               shape = 18,
+               size = 1,
+               color = "green")+ 
+  stat_summary(fun = mean,
+               fun.min = function(x) {mean(x) - sd(x)},
+               fun.max =function(x) {mean(x) + sd(x)},
+               color = "green",
+               geom = "errorbar")+ 
   theme(axis.ticks.x = element_blank(),
         axis.text.x = element_blank())
 
-ortho_df2 %>% ggplot(aes(y= angles, x = type_of_measure), color = "black") +
+degree_ms2 <- ortho_df2 %>% ggplot(aes(y= degree_spondylolisthesis, x = class_2, color = class_2)) +
+  stat_summary(fun = mean,
+               shape = 18,
+               size = 1)+ 
+  stat_summary(fun = mean,
+               fun.min = function(x) {mean(x) - sd(x)},
+               fun.max =function(x) {mean(x) + sd(x)},
+               geom = "errorbar")+ 
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank())  +
+  facet_wrap(~class_2)
+
+degree_ms3 <- ortho_df2 %>% ggplot(aes(y= degree_spondylolisthesis, x = class_3, color = class_3)) +
+  stat_summary(fun = mean,
+               shape = 18,
+               size = 1)+ 
+  stat_summary(fun = mean,
+               fun.min = function(x) {mean(x) - sd(x)},
+               fun.max =function(x) {mean(x) + sd(x)},
+               geom = "errorbar")+ 
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank()) +
+  facet_wrap(~class_3)
+
+ggarrange(plotlist= list(angles_ms, angles_ms2, angles_ms3) , nrow= 3, ncol = 1, legend = "left")
+ggarrange(plotlist= list(degree_ms, degree_ms2, degree_ms3) , nrow= 3, ncol = 1, legend = "left")
+
+
+
+
+#Resumimos la data en el grafico tipo boxplot para evaluar los quartiles y su relación con valores médias:
+
+ortho_df2 %>% ggplot(aes(y= angles, x = type_of_measure)) +
+  geom_boxplot(alpha = 0.3, mapping = aes(fill = type_of_measure)) +
+  stat_summary(fun = mean,
+               shape = 18,
+               size = 1,
+               mapping = aes(color = type_of_measure)) + 
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank())
+
+ortho_df2 %>% ggplot(aes(y= angles, x = type_of_measure)) +
   geom_boxplot(alpha = 0.3, aes(fill = type_of_measure)) +
-  stat_summary(fun.y = mean,
+  stat_summary(fun = mean,
                geom = "point",
                shape = 18, size = 4,
                aes(color = type_of_measure))+
@@ -461,20 +527,7 @@ ortho_df2 %>% ggplot(aes(y= angles, x = type_of_measure), color = "black") +
   theme(axis.ticks.x = element_blank(),
         axis.text.x = element_blank())
 
-### En grupos por 3 classificaciones
-ortho_df2 %>% group_by(type_of_measure, class_3) %>% 
-  summarise("Mean of angle" = mean(angles), "Standart deviation" = sd(angles))
-
-ortho_df2 %>% group_by(class_3) %>%  
-  summarise("Mean of displacement" = mean(degree_spondylolisthesis), "SD of displacement" = sd(degree_spondylolisthesis))
-
-ortho_df2 %>% ggplot(aes(x = 0, y= degree_spondylolisthesis), color = black) +
-  geom_boxplot(alpha = 0.4, aes(fill = class_3)) +
-  stat_summary(fun.y = mean, geom = "point", shape = 18, size = 5, aes(color = class_3))+ facet_wrap(~class_3)+ 
-  theme(axis.ticks.x = element_blank(),
-        axis.text.x = element_blank())
-
-ortho_df2 %>% ggplot(aes(y= angles, x = type_of_measure), color = "black") +
+ortho_df2 %>% ggplot(aes(y= angles, x = type_of_measure)) +
   geom_boxplot(alpha = 0.3, aes(fill = type_of_measure)) +
   stat_summary(fun.y = mean, 
                geom = "point", shape = 18,
@@ -484,10 +537,47 @@ ortho_df2 %>% ggplot(aes(y= angles, x = type_of_measure), color = "black") +
   theme(axis.ticks.x = element_blank(),
         axis.text.x = element_blank())
 
-# Normality tests: Ahora vamos a comprobar si la distribución de las variables realmente sigue la distribución normal. Para esto vamos a utilizar el test de Kolmogorov-Smirnov, y la visualización con QQ-plot
+
+
+ortho_df2 %>% ggplot(aes(y= degree_spondylolisthesis,
+                         x = 0)) +
+  geom_boxplot(fill = "red",
+               alpha = 0.3) +
+  stat_summary(fun = mean, shape = 18,
+               size =1)+ 
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank())
+
+ortho_df2 %>% ggplot(aes(x =class_2,
+                         y= degree_spondylolisthesis,
+                         fill= class_2),
+                     color = black) +
+  geom_boxplot(alpha = 0.3,
+               aes(fill = class_2)) +
+  stat_summary(fun = mean,
+               geom = "point",
+               shape = 18, size = 5, 
+               aes(color = class_2))+
+  facet_wrap(~class_2)+ 
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank())
+
+
+ortho_df2 %>% ggplot(aes(x = class_3, y= degree_spondylolisthesis), color = black) +
+  geom_boxplot(alpha = 0.3, aes(fill = class_3)) +
+  stat_summary(fun = mean,
+               geom = "point",
+               shape = 18, 
+               size = 5,
+               aes(color = class_3)) +
+  facet_wrap(~class_3) + 
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank())
+
+# Normality tests: Ahora vamos a comprobar si la distribución de las variables realmente sigue la distribución normal (hipotesis 0). Para evaluarlo vamos a utilizar el test de Kolmogorov-Smirnov, y la visualización con QQ-plot
 
 # Kolmogorov-Smirnov
-# Para realizar este test sobre el conjunto de data vamos a utilizar función map - una varang de lapply() dentro del paquete tidyverse (libreria purr)
+# Para realizar este test sobre el conjunto de data vamos a utilizar función map - una variante de lapply() dentro del paquete tidyverse (libreria purr)
 
 ortho_df %>% 
   select(where(is.numeric))%>% 
@@ -495,6 +585,14 @@ ortho_df %>%
   set_names() %>% 
   map(~ lillie.test(ortho_df[,.])) %>%
   map_dfr(., tidy, .id = "variable")
+
+# Vamos a mirar si el hecho de quitar el outlier (valor 418 del grado de espondilolistesis nos afecta al tipo de distribución)
+ortho_df3 %>% 
+  select(where(is.numeric))%>% 
+  colnames() %>%
+  set_names() %>% 
+  map(~ lillie.test(ortho_df[,.])) %>%
+  map_dfr(., tidy, .id = "variable")  # Parece que no afecta, así que procedemos a seguir con el análisis con la data.frame completo.
 
 ### QQplot
 
@@ -618,5 +716,5 @@ lumbar_lordosis_angle | Varia de forma importante entre los tres grupos.
 
 
 Durante el analisi de cluster se realiza 2 tipos de análisis - no jerárquico utilizando valores de distancia entre puntos, y jerárquica. 
-Al realizar el test kmeans y al evaluar el data.frame se evidencia que el numero optimo de clusters se situa entre 2 y 3, por lo que se realiza analisis para las dos situaciones, objetivando mejor calidad de aciertamiento (74%) de clusterización para la situación con 3 clusteres.
+Al realizar el test kmeans() y al evaluar la data.frame se evidencia que el numero optimo de clusters se situa entre 2 y 3, por lo que se realiza analisis para las dos situaciones, objetivando mejor calidad de aciertamiento (74%) de clusterización para la situación con 3 clusteres.
 
