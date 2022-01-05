@@ -37,7 +37,7 @@ ortho_df <- merge(column_2C, column_3C, by = c("pelvic_incidence", "pelvic_tilt"
 ortho_df <- ortho_df %>% mutate("class_2" = factor(ortho_df$`class_2`, levels = c("Normal", "Abnormal")))
 ortho_df <- ortho_df %>% mutate("class_3" = factor(ortho_df$`class_3`, levels = c("Normal", "Hernia", "Spondylolisthesis")))
 ortho_df2 <- ortho_df %>% pivot_longer(cols = c(pelvic_incidence, pelvic_tilt, pelvic_radius, sacral_slope, lumbar_lordosis_angle), names_to = "type_of_measure", values_to = "angles") %>% select(type_of_measure, angles, everything())
-ortho_df3 <- ortho_df %>% select(where(is.numeric)) 
+ortho_df3 <- ortho_df %>% filter(degree_spondylolisthesis<400) 
 
 summary(ortho_df)
 summary(sapply(ortho_df,is.na))
