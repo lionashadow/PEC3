@@ -115,7 +115,7 @@ ortho_df3 <- ortho_df %>% filter(degree_spondylolisthesis<400) # limpiamos la da
 
 De todas las cuestiones que podemos realizar con estos datos, seleccionaremos las dos que, para nosotros, son las más destacables y extrapolables a una utilidad médica real.
 
-La primera cuestión sería relativa a la comparación de grupos. 
+La primera cuestión sería relativa a la comparación de los grupos de estudio. 
 **Pregunta 1: ¿Existen diferencias significativas entre las variables angulares del grupo "Normal" respecto al grupo "Abnormal" (personas con hernia o con espondilolistesis)?**. En otras palabras, ¿el hecho de tener hernia o espondilolistesis afecta significativamente en alguna de las variables de estudio? 
 Su respuesta nos permitirá discernir qué métodos de medida difieren estadísticamente respecto al grupo "Normal" y llegar a un mejor acercamiento a nivel de diseño de prótesis o clasificación de características de pacientes en bases de datos.
 
@@ -256,14 +256,14 @@ Por otro lado, fíjese que esta variable es la única que se mide en milímetros
 # Ejercicio 5: 
 - Complementando el apartado anterior, elaborar un análisis de regresión de dos conjuntos de variables (LAB2 y Ejercicio 6 de la PEC1). La elección de las variables, los resultados, así como su relación deben de estar correctamente justificada.
 
-Para realizar la regresión lineal eligiremos las dos variables que parezcan más relacionadas de entre todas las disponibles. Para ver el comportamiento que cada variable tiene con las otras variables del estudio, utilizaremos un gráfico de dispersión de pares de variables (pairs). Nótese que eliminaremos del análisis las dos variables de tipo caracter (class_2 y class_3) debido a que no son numéricas. Para analizar la relación entre variables de forma cuantitativa, calcularemos las correlaciones entre las variables numéricas mediante el comando "cor()".
+Para realizar la regresión lineal eligiremos las dos variables que parezcan más relacionadas de entre todas las disponibles, siempre que esa relación analizada tenga un sentido real. Para ver el comportamiento que cada variable tiene con las otras variables del estudio, utilizaremos un gráfico de dispersión de pares de variables (pairs). Nótese que eliminaremos del análisis las dos variables de tipo caracter (class_2 y class_3) debido a que no son numéricas. Para analizar la relación entre variables de forma cuantitativa, calcularemos las correlaciones entre las variables numéricas mediante el comando "cor()".
 
 ```{r}
 pairs(ortho_df[, -c(7:8)])
 
 cor(ortho_df[, -c(7:8)])
 
-# Para que sea más facil interpretar las relaciones entre las variables vamos a crear una visualización de las interacciones en contexto de classificación Normal-Anormal y Normal-Hernia-Espondilolistesis.
+# Para que sea más facil interpretar las relaciones entre las variables vamos a crear una visualización de las interacciones en contexto de clasificación Normal-Anormal y Normal-Hernia-Espondilolistesis.
 
 model.matrix(~0. + pelvic_incidence+pelvic_tilt+pelvic_radius+sacral_slope+lumbar_lordosis_angle+ degree_spondylolisthesis + class_3, ortho_df) %>%
   cor() %>% 
@@ -279,24 +279,28 @@ model.matrix(~0. + pelvic_incidence+pelvic_tilt+pelvic_radius+sacral_slope+lumba
 
 ```
 
-Este comando (cor()) nos muestra los coeficientes de correlación entre cada variable, por defecto mediante el método de Pearson. Cuando más próximos a 1 o -1, más relación tienen las dos variables, y por lo tanto, el incremento (en caso de coeficiente positivo) o el decremento (en caso de coeficiente negativo) de una variable influencia al incremento/decremento de la otra variable, respectivamente.
+El comando "cor()" nos muestra los coeficientes de correlación entre cada variable, por defecto mediante el método de Pearson. Cuando más próximos a 1 o -1, más relación tienen las dos variables, y por lo tanto, el incremento (en caso de coeficiente positivo) o el decremento (en caso de coeficiente negativo) de una variable influencia al incremento/decremento de la otra variable, respectivamente.
 
 **Elección de variables**
-De todos los coeficientes de correlación de Pearson entre dos variables distintas, los que tienen la cifra más elevada en valor absoluto son la incidencia pélvica (pelvic_incidence) con la pendiente sacral (sacral_slope), con un coeficiente de 0.8149600; seguido de la incidencia pélvica (pelvic_incidence) con el ángulo de lordosis lumbar (lumbar_lordosis_angle), con con un coeficiente de correlación de 0.71728236.
+De todos los coeficientes de correlación de Pearson entre dos variables distintas, el que tiene la cifra más elevada en valor absoluto es el de la incidencia pélvica (pelvic_incidence) con la pendiente sacral (sacral_slope), con un coeficiente de 0.8149600. Por lo tanto, sería lógico analizar estas dos variables, que son las que tienen un mayor coeficiente de correlación, para la regresión. No obstante, según la bibliografía, la incidencia pélvica (PI) se calcula mediante la suma de la pendiente sacral (SS) más la inclinación pélvica (PT), e influye en las variables de medida angulares próximas. Véase su descripción y definición indicada en el artículo de J.C.Le Huec et al. (2011): 
 
-Hace falta remarcar que existen algunas asociaciones de variables más con coeficientes de correlación elevados que quizás sean importantes en el siguiente análisis de regresión múltiple (véase el Ejercicio 6). No obstante, en este ejercicio, queremos comprobar si es cierto que la incidencia pélvica es una variable que se correlaciona con la pendiente sacral. Al tener un coeficiente de correlación tan próximo a 1, nuestra hipósis es que sí que se cumple esta relación.
+<https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3175921/>
 
-De las comparaciones visuales anteriores, si nos fijamos en el gráfico de comparación entre estas dos variables, observamos cómo la nube de puntos de los datos de nuestra muestra forma una línea en diagonal ascendente. Este hecho verifica que el coeficiente de correlación sea tan elevado y que éste tenga un valor positivo: cuando una de las variables aumenta, parece ser que la otra también.
+Por lo tanto, no tendría mucho sentido analizar la relación entre estas dos variables, ya que son dos variables que se sabe que están relacionadas desde un principio. Y lo mismo pasaría con la relación entre la incidencia pélvica con otras de las variables métricas. Es por eso que decidiremos comprobar la relación entre dos variables diferentes, pero que conserven un coeficiente de correlación elevado, como el ángulo de lordosis lumbar (lumbar_lordosis_angle) con la pendiente sacral (sacral_slope), que tiene un coeficiente de correlación distintivo de 0.59838689.
+
+Así, en este ejercicio queremos comprobar si es cierto que el ángulo de lordosis lumbar es una variable que se correlaciona con la pendiente sacral. Al tener un coeficiente de correlación no muy elevado (no es muy próximo a 1), nuestra hipótesis es que es probable que no se cumpla esta relación. No obstante, en caso de darse, nuestra hipótesis sería estas dos variables tienen una relación positiva.
+
+De las comparaciones visuales anteriores, si nos fijamos en el gráfico de comparación entre estas dos variables, observamos cómo la nube de puntos de los datos de nuestra muestra forma una línea en diagonal ascendente. Este hecho podría intuir que sí que existe una relación entre variables y verifica que éste tenga un valor positivo: cuando una de las variables aumenta, podría ser que la otra también. A continuación vamos a comprobar estadísticamente si este comportamiento es verídico o no.
 
 **Modelo de regresión lineal**
-Para determinar si esta relación es significativa realizaremos un análisis de regresión lineal entre estas dos variables. Para ello utilizaremos un modelo de regresión lineal (lm) que denominaremos como "ortho_lm". Nuestra hipótesis será que la pendiente sacrial es la variable independiente (explicativa) y que la incidencia pélvica es la variable dependiente (explicada), ya que el hecho de tener una pendiente sacral más elevada implicaría que el sacro de la persona en cuestión se inclinara hacia atrás y por lo tanto ésta tendría posiblemente un ángulo de incidencia pélvica superior.
+Para determinar si la relación es significativa realizaremos un análisis de regresión lineal entre estas dos variables. Para ello utilizaremos un modelo de regresión lineal (lm) que denominaremos como "ortho_lm". Nosotros definiremos la pendiente sacral como la variable independiente (explicativa) y el ángulo de lordosis lumbar como la variable dependiente (explicada), ya que el hecho de tener una pendiente sacral más elevada podría implicar que el sacro de la persona en cuestión se inclinara hacia atrás y por lo tanto ésta tendría una modificación en su ángulo de lordosis lumbar.
 
 ```{r}
-ortho_lm <-lm(ortho_df$pelvic_incidence~ortho_df$sacral_slope)
+ortho_lm <-lm(ortho_df$lumbar_lordosis_angle~ortho_df$sacral_slope)
 summary(ortho_lm)
 ```
 
-Mediante el "summary" del modelo observamos distintos valores estadísticos. El valor principal que nos interesa es el coeficiente de determinación (el R-squared) del modelo, que nos dictará qué tan cerca están los datos de una regresión lineal. En este caso, el coeficiente de determinación no es muy próximo a 1 o -1 (es 0.6642) por lo que la bondad del modelo no parece tan fuerte como creíamos. Según este coeficiente, este modelo explicaría tan solo un 66.42% de la variabilidad de los datos.
+Mediante el "summary" del modelo observamos distintos valores estadísticos. El valor principal que nos interesa es el coeficiente de determinación (el R-squared) del modelo, que nos dictará qué tan cerca están los datos de una regresión lineal. En este caso, el coeficiente de determinación es relativamente lejano a 1 o -1 (es 0.3581) por lo que la bondad del modelo no parece demasiado fuerte, corroborando nuestra hipótesis. Según este coeficiente, este modelo explicaría tan solo un 35.81% de la variabilidad de los datos, que, sin llegar al 50%, no nos permite relacionar las dos variables.
 
 **Normalidad y varianza de los errores**
 Para comprobar si el coeficiente obtenido es válido, analizaremos la normalidad de los errores del modelo mediante un histograma básico, un boxplot y el gráfico de cuartiles de los residuos.
@@ -311,7 +315,7 @@ qqline(residuos)
 par(mfrow=c(1,1))
 ```
 
-En el primer gráfico observamos cómo, a nivel visual, los residuos parecen tener un comportamiento normal (la forma de una pendiente simétrica con un pico próximo al cero). El segundo gráfico nos añade la información relativa a los outliers. Parece ser que existen diversos valores de nuestra muestra que hacen alejarse los errores de la normalidad de los datos. No obstante, según el tercer gráfico, no parece ser significativo, ya que los residuos siguen una recta diagonal con una desviación en el tercer cuartil únicamente. Así, podemos concluir que los residuos siguen una distribución normal.
+En el primer gráfico observamos cómo, a nivel visual, los residuos parecen tener un comportamiento normal (la forma de una pendiente simétrica con un pico próximo al cero). El segundo gráfico nos añade la información relativa a los outliers. Parece ser que existen diversos valores de nuestra muestra que hacen alejarse los errores de la normalidad de los datos. No obstante, según el tercer gráfico, no parece ser significativo, ya que los residuos siguen una recta diagonal con una desviación en el tercer cuartil únicamente. Así, podemos concluir que los residuos parecen seguir una distribución normal.
 
 Una vez verificada la normalidad de los residuos, analizaremos si la varianza de los errores es constante. El hecho de que la varianza de los errores sea constante implicaría que la variable dependiente variaría debido a nuestra variable independiente, no debido a otros factores externos a nuestro análisis. Para ello, compararemos el gráfico de nuestro modelo con los residuos estandarizados.
 
@@ -320,23 +324,19 @@ plot(fitted.values(ortho_lm),rstandard(ortho_lm),xlab="Valores ajustados",ylab="
 abline(h=0)
 ```
 
-Verificamos que existen algunas anotaciones de nuestra muestra (outliers) que se alejan del comportamiento de la mayoría (es decir, que se alejan de la línea centrada al cero). Aun así, éstas parecen no ser significativas debido a que son pocas. 
+Con este gráfico verificamos que existen algunas anotaciones de nuestra muestra (outliers) que se alejan del comportamiento de la mayoría (es decir, que se alejan de la línea centrada al cero). Aun así, éstas parecen no ser significativas debido a que son pocas. 
 
 Es por eso que aceptamos el modelo de regresión lineal y suponemos que el hecho de que su coeficiente de determinación no llegue a ser tan elevado como su coeficiente de correlación podría ser debido a la influencia de estos outliers.
 
 **Modelo final y conclusiones**
-Finalmente, creemos que el modelo estudiado parece válido y lo representaremos en el siguiente gráfico. Véase cómo la mayoría de datos de nuestra muestra para las dos variables sigue un mismo comportamiento lineal ascendente.
+Finalmente, creemos que el modelo estudiado parece válido y que por lo tanto parece no existir una relación significativa entre las dos variables de estudio. Representaremos el modelo final en el siguiente gráfico. Véase cómo existe parte de los datos de nuestra muestra que sigue un mismo comportamiento lineal ascendente para las dos variables, pero la nube de puntos que se aleja de este comportamiento es demasiado grande como para definir una relación lineal significativa.
 
 ```{r}
-plot(ortho_df$sacral_slope,ortho_df$pelvic_incidence, main="Modelo de regresión lineal", xlab="Pendiente sacral", ylab= "Incidencia pélvica")
+plot(ortho_df$sacral_slope,ortho_df$lumbar_lordosis_angle, main="Modelo de regresión lineal", xlab="Pendiente sacral", ylab= "Ángulo de lordosis lumbar")
 abline(ortho_lm)
 ```
 
-Como conclusión podemos decir que, aunque el coeficiente de determinación no sea muy elevado, las dos variables analizadas (incidencia pélvica y pendiente sacral) tienen cierta relación en cuanto a su comportamiento. Además, sabemos que esta relación es positiva (un aumento de la pendiente sacral puede implicar un aumento de la incidencia pélvica). Estos datos son consistentes con el comportamiento biológico esperado, ya que el hecho de tener una pendiente sacral más elevada significa que el ángulo entre el sacro y el eje horizontal aumenta, haciendo inclinar así la pelvis. Al hacerlo, el ángulo de incidencia pélvica aumentaría debido a que éste tiene su base de medida entre el eje bicoxofemoral (que no habría cambiado) y línea perpendicular a la placa sacra (que se habría movido).
-
-Este argumento se sustenta de bibliografía, como el estudio de E.V. Geiger et al. (2007), que econtró una correlación entre estas dos variables en su muestra de pacientes.
-
-<https://www.researchgate.net/publication/7022399_Adjustment_of_pelvispinal_parameters_preserves_the_constant_gravity_line_position>
+Como conclusión podemos decir que, como el coeficiente de determinación no es muy elevado, las dos variables analizadas (ángulo de lordosis lumbar y pendiente sacral) no parecen tener mucha relación en cuanto a su comportamiento. Esta falta de significación podría darse por la gran variabilidad en los elementos de la muestra, pero también porque miden elementos distintos a nivel anatómico pélvico.
 
 # Ejercicio 6: 
 - Realizar, a partir de los conceptos trabajados en el LAB4 y la PEC2, un estudio probabilístico (a elección propia) de al menos 3 de las variables, que ayude a esclarecer cuestiones de relevancia que se pl antean en los ámbitos de acción estudiados.
@@ -383,9 +383,6 @@ En este sentido, si aceptamos el modelo, la variable "incidencia pélvica" tendr
 
 A nivel anatómico, estos datos tienen mucho sentido. Como se ha visto en el ejercicio anterior, existe una relación documentada entre la incidencia pélvica y la pendiente sacral. En cuanto a la incidencia pélvica y la inclinación pélvica, pasa exactamente lo mismo.
 
-De hecho, tal como indica el artículo de J.C.Le Huec et al. (2011), en medicina la incidencia pélvica (PI) se calcula mediante la suma de la pendiente sacral (SS) más la inclinación pélvica (PT).
-
-<https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3175921/>
 
 Por lo tanto, parece lógico que estas tres variables tengan una correlación positiva significativa y que, por lo tanto, a mayor inclinación pélvica, mayor sea la incidencia pélvica.
 
