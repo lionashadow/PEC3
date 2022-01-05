@@ -115,7 +115,7 @@ ortho_df3 <- ortho_df %>% filter(degree_spondylolisthesis<400) # limpiamos el da
 
 De todas las cuestiones que podemos realizar con estos datos, seleccionaremos las dos que, para nosotros, son las más destacables y extrapolables a una utilidad médica real.
 
-La primera cuestión sería relativa a la comparación de grupos. 
+La primera cuestión sería relativa a la comparación de los grupos de estudio. 
 **Pregunta 1: ¿Existen diferencias significativas entre las variables angulares del grupo "Normal" respecto al grupo "Abnormal" (personas con hernia o con espondilolistesis)?**. En otras palabras, ¿el hecho de tener hernia o espondilolistesis afecta significativamente en alguna de las variables de estudio? 
 Su respuesta nos permitirá discernir qué métodos de medida difieren estadísticamente respecto al grupo "Normal" y llegar a un mejor acercamiento a nivel de diseño de prótesis o clasificación de características de pacientes en bases de datos.
 
