@@ -21,50 +21,49 @@ library(factoextra)
 # Ejercicio 1 
 - Buscar un conjunto de datos relacionados con la Bioestadística o la Bioinformática. Posibles recursos bibliográficos son aquellos presentados en la PEC1, por ejemplo: http://www.bioinformatics.org/sms2/index.html; o bien http://biostat.mc.vanderbilt.edu/wiki/Main/DataSets. También es posible utilizar fuentes propias o de interés, siempre teniendo en cuenta que sean datos públicos para los usuarios. Será necesario especificar la procedencia y la justificación de la elección de los datos.
 
-Para nuestro trabajo hemos elegido la base de datos pública, que hemos encontrado en el sitio web kaggle.com:
+Para nuestro trabajo hemos elegido los datos de una base de datos pública que hemos encontrado en el sitio web kaggle.com:
 
-https://www.kaggle.com/uciml/biomechanical-features-of-orthopedic-patients (data recodida inicialmente de Lichman, M. (2013). UCI Machine Learning Repository [http://archive.ics.uci.edu/ml]. Irvine, CA: University of California, School of Information and Computer Science) 
+https://www.kaggle.com/uciml/biomechanical-features-of-orthopedic-patients (datos recodidos inicialmente de Lichman, M. (2013). UCI Machine Learning Repository [http://archive.ics.uci.edu/ml]. Irvine, CA: University of California, School of Information and Computer Science) 
 
-Hemos eligido este data set por:
-- Una de las problemas frecuentes en la medicina en el ambito contemporaneo es la optimización de recursos donde sea posible. Y una área de aplicación de la analísis es en la etápa del diagnóstico de algunas enfermedades en las etapas tempranas, así por ejemplo, el diagnóstico de la hernia intervertebral exige utilizar la prubas caras y que tardan mucho en realizarse, cuando hay alternativas, que, quizas, no son tan fiables, pero puedan ayudar a la hora de selecionar pacientes para la siguiente etápa de estudios. En este caso se puede hablar de comparación entre estudio con tomografia computarizada vs la resonancia magnética.
-- Es un data-set público y facil de acceder.
-- Es un data-set relativamente límpio y ya preparado para realizar analisis de datos sobre el.
+Hemos eligido este conjunto de datos (data-set) porque:
+- Uno de los problemas frecuentes dentro de la medicina (en el ámbito contemporáneo) es la optimización de recursos donde sea posible. Y un área de aplicación de los análisis de datos es la etapa del diagnóstico de algunas enfermedades en las etapas tempranas. Por ejemplo, el diagnóstico de la hernia intervertebral exige utilizar prubas caras y que tardan mucho en realizarse, cuando hay alternativas que quizás no son tan fiables, pero puedan ayudar a la hora de selecionar pacientes para la siguiente etapa de estudios. En este caso se puede hablar de comparación entre los estudios con tomografía computarizada vs estudios de resonancia magnética. En este sentido, el hecho de definir unas variables posturales pélvicas determinadas y agrupar los pacientes según ellas podría ayudar a este tipo de diagnósticos, y el análisis de los datos de pacientes con patologías determinadas en comparación con personas sin esas patologías es crucial para poder definir unos valores de diferenciación para dicho diagnóstico.
+- Es un data-set público y fácil de acceder.
+- Es un data-set relativamente limpio y ya preparado para realizar análisis de datos sobre él.
 
 
 # Ejercicio 2
 - Utilizando R, mostrar y explicar qué tipo de ficheros se han importado, las variables de estudio (tipo, clasificación, ...), así como todo aquello relevante para el estudio. Incluir capturas de pantalla y las instrucciones en R utilizadas para importar y mostrar los datos.
 
-Esta dataset tiene 2 archivos .csv (column_2C_weka y column_3C_weka), que se puede juntar y valorar conjuntamente:
-Es una base de datos que contiene informacaión sobre 310 personas, en las que evaluaron posición de vertebras de la columna lumbar utilizando varios parametros (tabla 1) y exolicación visual con la imagen del articulo^1. Dentro de esta muestra habia 100 personas que consideramos "sanos" o "normales" y 210 ("anormales") que consideramos que tenian algun tipo de patología: "hernia" o "spondilolistesis". 
-
+Este conjunto de datos tiene 2 archivos en formato ".csv" (column_2C_weka y column_3C_weka), que se pueden unir y valorar conjuntamente.
+El data-set es una base de datos que contiene informacaión sobre 310 personas, en las que se evaluaron la posición de sus vértebras de la parte lumbar utilizando varios parámetros (véase la tabla 1 y una explicación visual del artículo 1). Dentro de esta muestra había 100 personas que consideramos "sanas" o "normales", sin patologías vertebrales o pélvicas, y 210 ("anormales") que consideramos que tenían algun tipo de patología: "hernia" o "spondilolistesis". 
 
 
 tabla 1:
 
 Variable|Expicación del variable
 -|-
-pelvic_incidence, numerico en grados | Angulo entre la línea que pasa del centro de la lámina terminal del S1 al centro de las cabezas femorales, y la línea perpendicula a la lámina terminal de S1
-pelvic_tilt, numerico en grados | Angulo entre la línea que pasa del centro de la lámina terminal del S1 al centro de las cabezas femorales y una línea vertical
-lumbar_lordosis_angle, numerico |  angulo entre la lámina terminal superior del L1 y S1
-sacral_sclope, numerico en grados | angulo entre la línea perpendicula a la lámina terminal de S1 y una línea horizontal
-pelvic_radius, numerico en grados | Es un angulo entre la línea vertical y una línea del centro de las cabezas femorales hasta el borde posterior de la lámina terminal de S1
-degree_spondylolysthesis, numerico en mm | distancia de desplazamiento de la vertebra superior sobre la vertebra inferior (positivo - anterior y negativo - posterior)
-class | es posible utilizar este variable como character o factor.
-class_2c, factor | Classificación de data como "normal" y "anoraml"
-class_3c, factor | Classificación de data como "normal", "Hernia" y "spondilolistesis"
+pelvic_incidence, numérica, en grados | Ángulo entre la línea que pasa del centro de la lámina terminal del S1 al centro de las cabezas femorales, y la línea perpendicular a la lámina terminal de S1
+pelvic_tilt, numérica, en grados | Ángulo entre la línea que pasa del centro de la lámina terminal del S1 al centro de las cabezas femorales y el eje vertical
+lumbar_lordosis_angle, numérica, en grados |  Ángulo entre la lámina terminal superior del L1 y S1
+sacral_sclope, numerica, en grados | Ángulo entre la línea perpendicular a la lámina terminal de S1 y el eje horizontal
+pelvic_radius, numérica, en grados | Ángulo entre el eje vertical y una línea entre centro de las cabezas femorales hasta el borde posterior de la lámina terminal de S1
+degree_spondylolysthesis, numérica, en mm | Distancia de desplazamiento de la vértebra superior sobre la vértebra inferior (positivo: anterior/ negativo: posterior)
+class | Es posible utilizar esta variable como variable de tipo character o de tipo factor.
+class_2c, factor | Clasificación de los sujetos como "Normal" y "Abnormal"
+class_3c, factor | Clasificación de los sujetos como "Normal", "Hernia" y "Spondylolisthesis"
 
 
-En esta imagen presentaremos la visualización de lo angulos medidas en la base de datos.
+En esta imagen presentaremos la visualización de lo ángulos medidos en la base de datos.
 ![Lumbar_angles](/Users/lionashadow/OneDrive/UOC/Software para analisys de data/PEC 3/PEC3/Image_example_angles.png)
 
-Las bibliografía:
+Las bibliografías utilizadas para la comprensión de estas variables se han extraído de las siguientes referencias:
 
   1. Sergides IG, McCombe PF, White G, Mokhtar S, Sears WR. Lumbo-pelvic lordosis and the pelvic radius technique in the assessment of spinal sagittal balance: strengths and caveats. Eur Spine J. 2011;20 Suppl 5(Suppl 5):591-601. doi:10.1007/s00586-011-1926-z
   
   2. https://www.orthobullets.com/spine/2071/lumbar-spine-anatomy  para la fecha de 25.12.2021
 
 ```{r Preparación de la base de datos}
-# Vamos a introducir los datos en RStudio. Para esto vamos a utilizar la libreria básica del R 
+# Vamos a introducir los datos en RStudio. Para esto vamos a utilizar la librería básica de R 
 column_2C <- read_csv("archive/column_2C_weka.csv", 
                     col_types = cols(pelvic_incidence = col_number(), 
                                            `pelvic_tilt numeric` = col_number(), 
@@ -76,21 +75,21 @@ column_3C <- read_csv("archive/column_3C_weka.csv",
                                              pelvic_tilt = col_number(), lumbar_lordosis_angle = col_number(), 
                                              sacral_slope = col_number(), pelvic_radius = col_number(), 
                                              degree_spondylolisthesis = col_number()))
-# Vamos a ajustar los nombres de variables y confirmamos que son iguales
+# Vamos a ajustar los nombres de las variables y confirmaremos que son iguales
 colnames(column_2C) <- colnames(column_3C)
 colnames(column_2C) %>% 
   set_names() %>% 
   map(~(column_2C[,.x]==column_3C[,.x])) %>% 
   as.data.frame() %>%
-  summary() #utilizaremos función map de la libreria purr de tidyverse, aplicando la función a todos los elementos de las columnas correspondientes.
+  summary() #utilizaremos la función "map" de la librería "purr" de tidyverse, aplicando la función a todos los elementos de las columnas correspondientes.
 
-# Y cambiamos el nombre de la columna "class" para poder juntar los dos data frame.
+# Y cambiamos el nombre de la columna "class" para poder juntar los dos data-frames.
 column_2C<-rename(column_2C, "class_2" = "class")
 column_3C<-rename(column_3C, "class_3" = "class")
 
-# Creamos un data frame con información de los dos archivos iniciales.
+# Creamos un data-frame con información de los dos archivos iniciales.
 ortho_df <- merge(column_2C, column_3C, by = c("pelvic_incidence", "pelvic_tilt", "lumbar_lordosis_angle", "sacral_slope", "pelvic_radius", "degree_spondylolisthesis"))
-# Convertimos la varibel class en un factor, con los niveles que van de nivel normal a nivel con alteraciones más faciles de encontrar (no se puede evidenciar la hernía intervertebral en la radiografia, pero la espondilolistesis - sí).
+# Convertimos la variable "class" en un factor, con los niveles que van de nivel Normal a nivel con alteraciones más faáiles de encontrar (no se puede evidenciar la hernia intervertebral en la radiografía; pero la espondilolistesis, sí).
 ortho_df <- ortho_df %>%
   mutate("class_2" = factor(ortho_df$`class_2`,
                             levels = c("Normal", "Abnormal")))
@@ -101,13 +100,13 @@ ortho_df <- ortho_df %>%
 ```
 
 
-```{r Preparación de la base de datos para visualizaciónes y análisis}
-# En algunas ocasiones, para el objetivo de visualizar la data con mayor facilidad, vamos a cerar un data set con 
+```{r Preparación de la base de datos para visualizaciones y análisis}
+# En algunas ocasiones, para el objetivo de visualizar los datos con mayor facilidad, vamos a crear un data-set con: 
 ortho_df2 <- ortho_df %>%
   pivot_longer(cols = c(pelvic_incidence, pelvic_tilt, pelvic_radius, sacral_slope, lumbar_lordosis_angle),
                names_to = "type_of_measure", values_to = "angles") %>% 
   select(type_of_measure, angles, everything())
-ortho_df3 <- ortho_df %>% filter(degree_spondylolisthesis<400) # limpiamos la data.frame de un valor evidentemente erroneo (degrre_spondilolistesis = 418 mm)
+ortho_df3 <- ortho_df %>% filter(degree_spondylolisthesis<400) # quitamos del data.frame un valor de la muestra evidentemente erróneo (paciente con un degree_spondilolistesis de 418 mm)
 ```
 
 # Ejercicio 3: 
@@ -286,7 +285,7 @@ De todos los coeficientes de correlación de Pearson entre dos variables distint
 
 <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3175921/>
 
-Por lo tanto, no tendría mucho sentido analizar la relación entre estas dos variables, ya que son dos variables que se sabe que están relacionadas desde un principio. Y lo mismo pasaría con la relación entre la incidencia pélvica con la inclinación pélvica. Es por eso que decidiremos comprobar la relación entre dos variables diferentes, pero que conserven un coeficiente de correlación elevado, como el ángulo de lordosis lumbar (lumbar_lordosis_angle) con la incidencia pélvica (pelvic_incidence), que tiene un coeficiente de correlación distintivo de  0.7172824.
+Por lo tanto, no tendría mucho sentido analizar la relación entre estas dos variables, ya que son dos variables que se sabe que están relacionadas desde un principio. Y lo mismo pasaría con la relación entre la incidencia pélvica con la inclinación pélvica. Es por eso que decidiremos comprobar la relación entre dos variables diferentes, pero que conserven un coeficiente de correlación elevado, como el ángulo de lordosis lumbar (lumbar_lordosis_angle) con la incidencia pélvica (pelvic_incidence), que tiene un coeficiente de correlación distintivo de 0.7172824.
 
 Así, en este ejercicio queremos comprobar si es cierto que el ángulo de lordosis lumbar es una variable que se correlaciona con la incidencia pélvica. Al tener un coeficiente de correlación relativamente elevado (es próximo a 1), nuestra hipótesis es que es probable que sí e cumpla esta relación y que ésta será positiva.
 
@@ -342,7 +341,7 @@ Como conclusión podemos decir que, como el coeficiente de determinación es rel
 - Realizar, a partir de los conceptos trabajados en el LAB4 y la PEC2, un estudio probabilístico (a elección propia) de al menos 3 de las variables, que ayude a esclarecer cuestiones de relevancia que se pl antean en los ámbitos de acción estudiados.
 
 Con el análisis del ejercicio 5 hemos podido responder parcialmente la pregunta 2 que nos proponíamos: ¿existe alguna relación entre nuestras variables de estudio?
-Mediante la regresión lineal hemos comprobado que existe una correlación positiva significativa entre la pendiente sacral y la incidencia pélvica. No obstante, también hemos visto unos índices de correlación elevados entre otras variables de estudio. Es por eso que ahora realizaremos una regresión múltiple para analizar qué variables tienen relación directa con otra/s.
+Mediante la regresión lineal hemos comprobado que existe una correlación positiva significativa entre el ángulo de lordosis lumbar y la incidencia pélvica. No obstante, también hemos visto unos índices de correlación elevados entre otras variables de estudio. Es por eso que ahora realizaremos una regresión múltiple para analizar qué variables tienen relación directa con otras.
 
 **Elección de variables**
 Para definir un modelo inicial de regresión múltiple, debemos indagar de nuevo en los coeficientes de correlación de nuestras variables, para así elegir aquellos que sean próximos a 1 o -1. Nótese que trabajaremos con el mismo método de Pearson para calcularlos.
@@ -351,54 +350,55 @@ Para definir un modelo inicial de regresión múltiple, debemos indagar de nuevo
 cor(ortho_df[, -c(7:8)])
 ```
 
-En este caso observamos que, a parte de la correlación significativa entre la incidencia pélvica y la pendiente sacral observada anteriormente, existen asociaciones con coeficientes de correlación elevados.
+En este caso observamos que, a parte de la correlación significativa entre la incidencia pélvica y la pendiente sacral, y entre la incidencia pélvica y el ángulo de lordosis lumbar, observados anteriormente, existen asociaciones con coeficientes de correlación elevados.
 
-Es el caso de la incidencia pélvica (pelvic_incidence) con el ángulo de lordosis lumbar (lumbar_lordosis_angle) que tienen un coeficiente de correlación de 0.71728236. Seguidamente, tenemos la incidencia pélvica con el grado de espondilolistesis (degree_spondylolisthesis) (coeficiente de 0.6387427) y la incidencia pélvica con la inclinación pélvica (pelvic_tilt) (coeficiente de 0.6291988). Finalmente existe un coeficiente de correlación de 0.59838689 entre el ángulo de lordosis lumbar y la pendiente sacral (sacral_slope), un coeficiente de 0.53366701 entre el ángulo de lordosis lumbar y el grado de espondilolistesis, y un coeficiente de 0.52355746 entre la pendiente sacral y el grado de espondilolistesis.
+Es el caso de la incidencia pélvica con el grado de espondilolistesis (con un coeficiente de 0.6387427), seguido de la incidencia pélvica con la inclinación pélvica (coeficiente de 0.6291988).
+Finalmente existe un coeficiente de correlación de 0.59838689 entre el ángulo de lordosis lumbar y la pendiente sacral, un coeficiente de 0.53366701 entre el ángulo de lordosis lumbar y el grado de espondilolistesis, y un coeficiente de 0.52355746 entre la pendiente sacral y el grado de espondilolistesis.
 
 A partir de estos casos, tenemos coeficientes de correlación en valor absoluto inferiores a 0.5 por lo que no los incluiremos a priori como destacables.
 
-Por lo tanto, observamos que la variable de incidencia pélvica es la que parece tener más relación con las otras, teniendo los coeficientes de correlación de Pearson más elevados para cuatro de las otras variables. Es por eso que parece intuitivo que esta variable será nuestra variable objetivo para comparar con las otras. En este caso, incluiremos todas las otras variables en el modelo, aunque sabemos que probablemente el radio pélvico sea descartado más adelante, ya que es la única variable de nuestro estudio sin un coeficiente de correlación elevado.
+Por lo tanto, observamos que la variable "incidencia pélvica" es la que parece tener más relación con las otras, teniendo los coeficientes de correlación de Pearson más elevados para cuatro de las otras variables. Es por eso que parece intuitivo que esta variable sea nuestra variable objetivo para comparar con las otras. No obstante, como se ha mencionado en el ejercicio anterior, la incidencia pélvica es una variable de medida postural que se relaciona directamente con otras de nuestras variables de estudio y, por lo tanto, no sería muy interesante analizar su comportamiento en este ejercicio, ya que desde un principio se sabe que tendrá relación extremadamente alta con dos de las variables disponibles. Es por eso que eligiremos otra variable distinta que pueda presentarnos una comparación más interesante.
+
+En este caso, hemos elegido el ángulo de lordosis lumbar. De momento, gracias a la regresión lineal, sabemos que tiene relación con la incidencia pélvica, pero queremos indagar sobre el comportamiento que tiene con las demás variables. Incluiremos todas las otras variables en el modelo, aunque sabemos que probablemente aquellas con coeficientes de correlación inferiores a 0.5 sean descartadas más adelante. En todo caso, realizaremos el modelo completo para que la elección se haga estadísticamente.
 
 **Modelo de regresión múltiple**
-Realizamos el modelo de regresión de la incidencia pélvica con las cinco variables numéricas restantes.
+Realizamos el modelo de regresión del ángulo de lordosis lumbar con las cinco variables numéricas restantes.
 
 ```{r}
-ortho_modelomu<-lm(pelvic_incidence~pelvic_tilt+lumbar_lordosis_angle+sacral_slope+pelvic_radius+degree_spondylolisthesis, data=ortho_df)
+ortho_modelomu<-lm(lumbar_lordosis_angle~pelvic_incidence+pelvic_tilt+sacral_slope+pelvic_radius+degree_spondylolisthesis, data=ortho_df)
 
 summary(ortho_modelomu)
 ```
 
-El "summary" del modelo nos informa de la significación de la correlación de nuestra variable objetivo (incidencia pélvica) con cada otra variable. Obsérvese que los coeficientes significativos son únicamente con la inclinación pélvica (pelvic_tilt), con p-valor inferior a 2e-16, y con la pendiente sacral (sacral_slope), con p-valor inferior a 2e-16. Los asteriscos nos informan visualmente de que éstas son las únicas dos variables con correlaciones significativas para la incidencia pélvica.
+El "summary" del modelo nos informa de la significación de la correlación de nuestra variable objetivo (ángulo de lordosis lumbar) con cada otra variable. Obsérvese que los coeficientes significativos son únicamente con la incidencia pélvica (pelvic_incidence), con p-valor inferior a 2e-16, con el radio pélvico (pelvic_radius), con p-valor de 0.0177 y finalmente con el grado de espondilolistesis (degree_spondylolisthesis), con p-valor de 0.0441. Los asteriscos nos informan visualmente de que éstas son las únicas tres variables con correlaciones significativas para el ángulo de lordosis lumbar.
 
-Además, nos otorga el coeficiente de determinación (R-squared) del modelo, siendo éste el máximo (1). Esta información parece sospechosa, pues en biología es difícil obtener un coeficiente de determinación total, pero si nos fijamos en el p-valor del modelo, observamos que éste es significativo (inferior a 2.2e-16). Es probable que tengamos un caso de multicolinealidad, es decir, varias variables que tienen correlación muy elevada, y eso haría incrementar el coeficiente de determinación. Aun así, como es un análisis significativo, ésto nos verifica que la bondad del modelo de regresión es positiva. En otras palabras, toda la variabilidad de la variable en cuestión (incidencia pélvica) viene dada por otras variables del estudio.
+Además, nos otorga el coeficiente de determinación (R-squared) del modelo, siendo éste de 0.5334. Esto nos indica que la bondad del modelo de regresión múltiple es aceptable, ya que es superior a 0.5, aunque ésta no sea no muy elevada (sería mejor si estuviera más cerca de 1/-1). En otras palabras, un 53.34% de la variabilidad de la variable en cuestión (ángulo de lordosis lumbar) viene dada por las otras tres variables elegidas como variables con correlación significativa (incidencia pélvica, radio pélvico y grado de espondilolistesis).
 
-Ahora que sabemos que nuestras variables predictoras para la incidencia pélvica son la pendiente sacral y la inclinación pélvica, perfeccionaremos el modelo de regresión.
+Ahora que sabemos nuestras variables predictoras, perfeccionaremos el modelo de regresión, eliminando las otras variables que parecen no estar relacionadas directamente con nuestra variable objetivo.
 
 ```{r}
-ortho_modelomu2<-lm(pelvic_incidence~pelvic_tilt+sacral_slope, data=ortho_df)
+ortho_modelomu2<-lm(lumbar_lordosis_angle~pelvic_incidence+pelvic_radius+degree_spondylolisthesis, data=ortho_df)
 summary(ortho_modelomu2)
 ```
 
-En este sentido, si aceptamos el modelo, la variable "incidencia pélvica" tendría toda su variabilidad explicada por la pendiente sacral (como hemos corroborado en el ejercicio anterior) y la inclinación pélvica. 
+Confirmamos que el coeficiente de determinación del modelo es parecido al anterior (0.5312) y, como es relativamente alto, aceptamos este modelo final de regresión múltiple.
+En este sentido, si aceptamos el modelo, la variable "ángulo de lordosis lumbar" tendría gran parte de su variabilidad explicada por la incidencia pélvica, el radio pélvico y el grado de espondilolistesis. Como todos sus coeficientes de correlación son positivos, el modelo indicaría que un aumento de las tres variables independientes implicaría un aumento en el ángulo de lordosis lumbar. Como la significación de la correlación ente el ángulo de lordosis lumbar y la incidencia pélvica es mayor que en el resto de comparaciones, parece ser que gran parte de la variabilidad total de nuestra variable objetivo vendría dada por la incidencia pélvica.
 
-A nivel anatómico, estos datos tienen mucho sentido. Como se ha visto en el ejercicio anterior, existe una relación documentada entre la incidencia pélvica y la pendiente sacral. En cuanto a la incidencia pélvica y la inclinación pélvica, pasa exactamente lo mismo.
-
-
-Por lo tanto, parece lógico que estas tres variables tengan una correlación positiva significativa y que, por lo tanto, a mayor inclinación pélvica, mayor sea la incidencia pélvica.
+A nivel anatómico estos datos tienen cierto sentido. El radio pélvico tiene su vértice de medida en el inicio del sacro. Si el ángulo de lordosis lumbar aumenta, la pelvis retrocede hacia atrás, haciendo que el radio aumente. Al moverse el sacro, pasaría algo parecido para la incidencia pélvica, aumentando su ángulo respecto el eje de la cabeza femoral. Y, finalmente, un aumento en ángulo de lordosis podría implicar un movimiento entre vértebras, definiendo la espondilolistesis en algunos de los pacientes de la muestra.
 
 
 # Ejerecicio 7:
 - Complementando el apartado anterior, elaborar un análisis ANOVA de dos conjuntos de variables (LAB5 y Ejercicio 6 de la PEC2). La elección de las variables, los resultados, así como su relación deben de estar correctamente justificada. Además, realizar una prueba cluster de las variables, y si existe un fuerte agrupamiento, elaborar un dendograma (LAB5).
 
-Para decidir si se puede utuilizar el test ANOVA, tenemos que confirmar inialmente si las variables sigue la distribución normal y si la variable no es homoscedastica (tiene la misma varianza).
+Para decidir si se puede utilizar el test ANOVA, tenemos que confirmar inicialmente si las variables siguen una distribución normal además de confirmar si no son homoscedásticas (es decir, tienen la misma varianza).
 
 ```{r Evaluación de la normalidad y homogenidad de variables}
 
-# Empezamos mmirando a las variables y calculando valores medias y error estandart. 
+# Empezamos mirando las variables y calculando los valores de sus medias y errores estándar. 
 ortho_df2 %>% group_by(type_of_measure) %>% summarise("Mean of angle" = mean(angles), "Standart deviation" = sd(angles))
 ortho_df2 %>%  summarise("Mean of displacement" = mean(degree_spondylolisthesis), "SD of displacement" = sd(degree_spondylolisthesis))
 
-# Creamos la visualización de la distribución de las variables con denisity plot y con boxplot, marcando valores médias. En la ditribución normal valor media y valor mediana y moda coinciden. Por la visualización, parece que la variable pelvic_radius y la sacral_slope pueden seguir la distribución normal. También miramos si el hecho de pertenecer a una otra classificación puede afectar drasticamente al tipo de la sistribución. Se evidencia el cambio importante de comportamiento de la variable degree_spondilolistesis en comparación normal/anormal y espondilolistesis vs el resto de classificaciones.
+# Creamos la visualización de la distribución de las variables con "denisity plot" y con "boxplot", marcando los valores de las medias. En la distribución normal el valor de la media y el valor de la mediana y moda coinciden. En cuanto a la visualización, parece que la variable "pelvic_radius" y "sacral_slope" podrían seguir una distribución normal. También miramos si el hecho de pertenecer a una otra clasificación puede afectar drásticamente al tipo de distribución. Se evidencia un cambio importante de comportamiento de la variable "degree_spondilolistesis" al comparar los grupos "Normal" y "Abnormal", además del grupo "Espondilolistesis" con el resto.
 
 pt <- ortho_df2 %>% ggplot(aes(angles, fill = type_of_measure)) + geom_density(alpha = 0.2)
 ptc2 <- ortho_df2 %>% ggplot(aes(angles, fill = type_of_measure)) + geom_density(alpha = 0.2)+ facet_grid(~class_2)
@@ -412,19 +412,19 @@ pds3 <- ortho_df2 %>% ggplot(aes(degree_spondylolisthesis, fill = class_3)) + ge
 ppds <- list(pds,pds2,pds3)
 ggarrange(nrow = 3, ncol= 1, plotlist = ppds)
 
-# Evaluamos las valores medias y del error estandar segun la classificación:
-# Segun class_2
+# Evaluamos los valores de las medias y de los errores estándar según la clasificación:
+# Segun class_2 (grupos "Normal" y "Abnormal")
 ortho_df2 %>% group_by(type_of_measure, class_2) %>%
   summarise("Mean of angle" = mean(angles), "Standart deviation" = sd(angles))
 ortho_df2 %>% group_by(class_2) %>%
   summarise("Mean of displacement" = mean(degree_spondylolisthesis), "SD of displacement" = sd(degree_spondylolisthesis))
-# Según class_3
+# Según class_3 (grupos "Normal", "Hernia" y "Spondylolisthesis")
 ortho_df2 %>% group_by(type_of_measure, class_3) %>% 
   summarise("Mean of angle" = mean(angles), "Standart deviation" = sd(angles))
 ortho_df2 %>% group_by(class_3) %>%  
   summarise("Mean of displacement" = mean(degree_spondylolisthesis), "SD of displacement" = sd(degree_spondylolisthesis))
 
-# Creamos la visualización de valores médias y error estandar de las variables.
+# Creamos la visualización de los valores de las medias y los errores estándar de las variables.
 angles_ms <- ortho_df2 %>% ggplot(aes(y= angles, x = type_of_measure, color = type_of_measure)) +
   stat_summary(fun = mean,
                shape = 18,
@@ -503,7 +503,7 @@ ggarrange(plotlist= list(degree_ms, degree_ms2, degree_ms3) , nrow= 3, ncol = 1,
 
 
 
-#Resumimos la data en el grafico tipo boxplot para evaluar los quartiles y su relación con valores médias:
+#Resumimos los datos en un gráfico de tipo "boxplot" para evaluar los cuartiles y su relación con los valores de las medias:
 
 ortho_df2 %>% ggplot(aes(y= angles, x = type_of_measure)) +
   geom_boxplot(alpha = 0.3, mapping = aes(fill = type_of_measure)) +
@@ -571,10 +571,10 @@ ortho_df2 %>% ggplot(aes(x = class_3, y= degree_spondylolisthesis), color = blac
   theme(axis.ticks.x = element_blank(),
         axis.text.x = element_blank())
 
-# Normality tests: Ahora vamos a comprobar si la distribución de las variables realmente sigue la distribución normal (hipotesis 0). Para evaluarlo vamos a utilizar el test de Kolmogorov-Smirnov, y la visualización con QQ-plot
+# Normality tests: Ahora vamos a comprobar si la distribución de las variables realmente sigue una distribución normal (hipótesis 0). Para evaluarlo, como tenemos un abarcamiento muestral grande, vamos a utilizar el test de Kolmogorov-Smirnov, y su visualización con "QQ-plot".
 
 # Kolmogorov-Smirnov
-# Para realizar este test sobre el conjunto de data vamos a utilizar función map - una variante de lapply() dentro del paquete tidyverse (libreria purr)
+# Para realizar este test sobre el conjunto de data vamos a utilizar función map - una variante de lapply() dentro del paquete tidyverse (librería purr)
 
 ortho_df %>% 
   select(where(is.numeric))%>% 
@@ -583,13 +583,13 @@ ortho_df %>%
   map(~ lillie.test(ortho_df[,.])) %>%
   map_dfr(., tidy, .id = "variable")
 
-# Vamos a mirar si el hecho de quitar el outlier (valor 418 del grado de espondilolistesis nos afecta al tipo de distribución)
+# Vamos a mirar si el hecho de quitar el outlier (valor 418 del grado de espondilolistesis) nos afecta al tipo de distribución
 ortho_df3 %>% 
   select(where(is.numeric))%>% 
   colnames() %>%
   set_names() %>% 
   map(~ lillie.test(ortho_df[,.])) %>%
-  map_dfr(., tidy, .id = "variable")  # Parece que no afecta, así que procedemos a seguir con el análisis con la data.frame completo.
+  map_dfr(., tidy, .id = "variable")  # Parece que no afecta, así que procedemos a seguir con el análisis con el data-frame completo.
 
 ### QQplot
 
@@ -598,7 +598,7 @@ ggqqplot(ortho_df2, "angles", facet.by = "class_2", color = "type_of_measure")
 ggqqplot(ortho_df2, "degree_spondylolisthesis", color = "class_2", facet.by  = "class_2")
 ggqqplot(ortho_df2, "degree_spondylolisthesis", color = "class_3", facet.by  = "class_3")
 
-### Homogenidad - vamos a mirar si la data es homogénea
+### Homogenidad - vamos a mirar si los datos son homogéneos
 ortho_df %>% 
   select(where(is.numeric))%>% 
   colnames() %>%
@@ -616,7 +616,7 @@ ortho_df %>%
 ```
   
 ## Anova test:
- Tras realizar varios tests de normalidad se confirma que la distribución de data NO es normal, asi que procedemos a realizar tests ANOVA, con la idéa en mente de que la distribución puede ser insuficientemente normal para conseguir resultados fiables. El test de homogenidad de data sugiere NO-homogenidad de data.
+ Tras realizar varios tests de normalidad se confirma que la distribución de los datos NO es normal, así que procedemos a realizar tests ANOVA para conseguir resultados fiables con la idea en mente de que la distribución puede ser insuficientemente normal. El test de homogenidad de los datos sugiere que NO hay homogenidad en éstos.
  
 ```{r test Anova}
 # Realizoms el test de anova para diferentes variables.
@@ -624,66 +624,67 @@ anova_PI <- aov(pelvic_incidence~class_3, ortho_df)
 anova_S <- aov(degree_spondylolisthesis~class_3, ortho_df)
 anova_PR <- aov(pelvic_radius~class_3, ortho_df)
 anova_LLA <- aov(lumbar_lordosis_angle~class_3, ortho_df)
-# La relación de las medias entre gurpos para la incidencia pélvica
+# La relación de las medias entre grupos para la incidencia pélvica
 par(mfrow=c(2,2))
 plot(anova_PI)
 par(mfrow=c(1,1))
 plot(TukeyHSD(anova_PI))
-# La relación de las medias entre gurpos para el grado de espondilolistesis
+# La relación de las medias entre grupos para el grado de espondilolistesis
 par(mfrow=c(2,2))
 plot(anova_S)
 par(mfrow=c(1,1))
 plot(TukeyHSD(anova_S))
-# La relación de las medias entre gurpos para angulo del radius de pelvis
+# La relación de las medias entre grupos para ángulo del radio pélvico
 par(mfrow=c(2,2))
 plot(anova_PR)
 par(mfrow=c(1,1))
 plot(TukeyHSD(anova_PR))
-# La relación de las medias entre gurpos para el angulo del lordosis lumbar
+# La relación de las medias entre gurpos para el ángulo de lordosis lumbar
 par(mfrow=c(2,2))
 plot(anova_LLA)
 par(mfrow=c(1,1))
 plot(TukeyHSD(anova_LLA))
 
 ``` 
-Los tests sugieren que la diferencia de los valores medias de algunas variables se difiere de forma significativa entre  algunos grupos. (ver ejercicio 8)
+Los tests anteriores sugieren que la diferencia entre los valores de las medias de algunas variables difiere de forma significativa entre algunos grupos (ver conclusiones en el ejercicio 8). 
 
 
 
-```{r analisis de Cluster}
- #evaluamos un scatter plot para evaluar presencia de algun tipo de aglomeración.
+```{r Análisis de Clúster}
+ #Creamos un scatter plot para evaluar la presencia de algún tipo de aglomeración.
 ortho_df %>% ggplot(aes(lumbar_lordosis_angle, pelvic_incidence, color = class_3)) +
   geom_point()
 ortho_df %>% ggplot(aes(lumbar_lordosis_angle, pelvic_incidence, color = class_2)) +
   geom_point()
 
-# Miramos si se puede identificar algún numero de cluster
+# Miramos si se puede identificar algún número de clúster
 fviz_nbclust(ortho_df[,c(1,3)], kmeans, method = "wss")
 fviz_nbclust(ortho_df[,c(1,3)], kmeans, method = "silhouette")
 
-# Probamos classificar las valores segun la distancia entre los puntos del scatter plot para entre 2 y 3 clusteres
+# Probamos de clasificar las valores segun la distancia entre los puntos del scatter plot para 2 y 3 clústeres
 
 cluster2 <- kmeans(ortho_df[, c(1,3)], 2, nstart = 25)
 table(cluster2$cluster, ortho_df$class_2)
 summary(cluster2)
 fviz_cluster(cluster2, data = ortho_df[, c(1,3)])
-cluster2 # Se evidencia que la classificación entre 2 clusteres es bastente complicada y la busqueda de algomeraciones por distancia no ha sido muy eficaz, y se acierta solo en 61.4% de casos.
+cluster2 # Se evidencia que la clasificación entre 2 clústeres es bastente complicada y la búsqueda de algomeraciones por distancia no ha sido muy eficaz. Se acierta solo en 61.4% de los casos.
 
 
 cluster3 <- kmeans(ortho_df[, c(1,3)], 3, nstart = 25)
 table(cluster3$cluster, ortho_df$class_3)
 summary(cluster3)
 fviz_cluster(cluster3, data = ortho_df[, c(1,3)])
-cluster3 # y la clasterización en 3 clusteres se acierta en 74.1% de casos.
+cluster3 # La clusterización en 3 clústeres se acierta en 74.1% de casos.
 
 
-# otra forma de realizar analisis de cluster en estos casos es clusterización jerárquica
+# Otra forma de realizar el análisis de clúster en estos casos es la clusterización jerárquica:
 cluster <- hclust(dist(ortho_df), method="complete")
 plot(cluster)
 pltree(agnes(ortho_df, method = "complete"))
 
 ``` 
 
+Por lo tanto, parece ser que la bondad de la realización de clústeres es superior al utilizar 3 clústeres con nuestros datos, respecto 2.
 
 # Ejercicio 8: 
 - A partir de los datos de origen y el estudio realizado (incluyendo todos los puntos anteriores), presentar un apartado de conclusiones. Esta sección debe incluir un resumen de los principales resultados obtenidos en apartados anteriores, que ayuden al lector a comprender el ámbito de estudio. Además, se valorará positivamente la coherencia de resultados y las justificaciones presentadas.
@@ -692,26 +693,33 @@ Mediante este estudio hemos podido resolver las dos preguntas principales hechas
 
 **Pregunta 1: ¿Existen diferencias significativas entre las variables angulares del grupo "Normal" respecto al grupo "Abnormal"?**. 
 
-Según la muestra analizada, sí que existe una diferencia significativa entre algunas de las variables según los distintos grupos. Primeramente hemos visto cómo las medias de los pacientes con espondilolistesis para la incidencia pélvica y el ángulo de lordosis lumbar son superiores que en sujetos del grupo "Normal". Este hecho denota que el desliz de las vértebras de los pacientes con espondilolistesis afecta a estas dos variables métricas más que a los otros sujetos. Por lo tanto, los resultados sugieren que la incidencia pélvica y el ángulo de lordosis lumbar podrían llegar a ser dos variables definitorias para la espondilolistesis. Para los pacientes con "Hernia", no obstante, no había diferencias significativas respecto a los sujetos del grupo "Normal". Por lo tanto, el desplazamiento vertebral (espondilolistesis) influye claramente más que la hernia en las variables métricas posturales.
+Según las medias aritméticas de nuetra muestra, parece existir una diferencia significativa entre algunas de las variables según los distintos grupos (Normal/Hernia/Espondilolistesis). Primeramente hemos visto cómo las medias de los pacientes con espondilolistesis para la incidencia pélvica y el ángulo de lordosis lumbar son superiores que en sujetos del grupo "Normal". Este hecho denota que el desliz de las vértebras de los pacientes con espondilolistesis afecta a estas dos variables métricas más que a los otros sujetos. Por lo tanto, los resultados sugieren que la incidencia pélvica y el ángulo de lordosis lumbar podrían llegar a ser dos variables definitorias para la espondilolistesis. Para los pacientes con "Hernia", no obstante, no había diferencias significativas respecto a los sujetos del grupo "Normal". Por lo tanto, el desplazamiento vertebral (que crea la espondilolistesis) influye claramente más que la hernia en las variables métricas posturales.
 
-Por otro lado, tenemos que no parecen existir diferencias significativas entre los grupos para el radio pélvico, la pendiente sacral y la inclinación pélvica, por lo que éstas podrían ser variables menos explicativas para las afectaciones estudiadas. De hecho, el grupo de pacientes con Hernia no difiere significativamente del grupo Normal para ninguna variable, dando a entender que las variables métricas estudiadas en este análisis no serían buenos distintivos para esta patología. Quizás con más estudios de muestras mayores y más representativas se podría contrastar los datos de las dos patologías y verificar si las variables utilizadas en estos ejercicios son buenas variables tanto definidoras como métricas.
+Por otro lado, tenemos que no parecen existir diferencias significativas entre los grupos para el radio pélvico, la pendiente sacral y la inclinación pélvica, por lo que éstas podrían ser variables menos explicativas para las afectaciones estudiadas. De hecho, el grupo de pacientes con Hernia no difiere significativamente del grupo Normal para ninguna variable, dando a entender que las variables métricas estudiadas en este análisis no serían buenos distintivos para esta patología. Quizás con más estudios con muestras mayores y más representativas se podría contrastar los datos de las dos patologías y verificar si las variables utilizadas en estos ejercicios son buenas variables tanto definidoras como métricas.
+
+Finalmente, aunque creemos estas relaciones son lógicas y coherentes para la muestra, la fiabilidad del test de ANOVA es dudosa debido al tipo de distribución de sus datos (no parecen seguir una distribución normal). Por lo tanto no podemos verificar estadísticamente que se cumplan dichas relaciones con este test, y quizás sería preferible utilizar otros tests de comparación para determinarlo. Es remarcable que existen ciertos outliers en los datos de la muestra que podrían afectar al cómputo final de las comparaciones. Uno de estos outliers comprende los valores de un paciente con ángulos y desplazamientos vertebrales ciertamente anómalos para distintas variables, sugeriendo que es un error puntual de toma de muestras. En todo caso, al tratarse de un solo paciente, no creemos que sea decisivo para el comportamiento general de los datos en conjunto.
+
+A modo de resumen, las variables distintivas entre grupos son:
+
+Variable | Relación
+-|-
+pelvic_incidence | NO varía entre el grupo Normal y el grupo Hernia, pero varía en comparación con el grupo Espondilolistesis
+degree_spondylolisthesis | NO varía entre el grupo Normal y el grupo Hernia, pero varía en comparación con el grupo Espondilolistesis
+pelvic_radius| NO varía entre el grupo Espondilolistesis y el grupo Hernia, pero varía en comparación con el grupo espondilolistesis y el grupo Normal
+lumbar_lordosis_angle | Varía de forma importante entre los tres grupos.
+
 
 **Pregunta 2: ¿Existe alguna relación o correlación entre las variables del estudio?**
 
-Según los resultados de nuestros análisis, sí que existe una relación entre algunas de las variables.
+Según los resultados de nuestros análisis, parece existir una relación entre algunas de las variables.
 
-Primeramente, hemos detectado una correlación significativa entre la incidencia pélvica con la pendiente sacral. Esta correlación se ha detectado mediante un análisis de regresión lineal y ha sido confirmado con un análisis de regresión múltiple. Con éste último también se ha detectado una correlación elevada entre la incidencia pélvica y la inclinación pélvica. La relación entre estas tres variables ha sido verificada con los datos en la bibliografía. Además, esta relación tiene sentido a nivel anatómico, ya que las modificaciones en la inclinación pélvica y/o la pendiente sacral hacen que el ángulo de incidencia pélvica cambia cuando se progresa la enfermedad (presencia de hernias o espondilolistesis).
+Primeramente, mediante los coeficientes de correlación de Pearson, hemos detectado una posible correlación significativa entre la incidencia pélvica con la pendiente sacral y con la inclinación pélvica. Estas correlaciones no se han verificado mediante ningún análisis estadístico adicional debido a que han sido documentadas en la bibliografía anteriormente (J.C.Le Huec et al. (2011)).
 
-Durante el análisis de los valores médias entre los grupos (ANOVA) se evidencia que, aunque la distribución de las variables no es normal, lo que hace que el test elegido no es muy fiable, en algunos grupos el valor média es diferente de forma significativa.
+En referencia al ángulo de lordosis lumbar, mediante un análisis de regresión múltiple hemos detectado su relación con incidencia pélvica, el radio pélvico y el grado de espondilolistesis. Adicionalmente, gracias al análisis de regresión lineal hemos podido observar más detalladamente la relación de este ángulo de lordosis lumbar con la incidencia pélvica y hemos comprobado que ésta parece ser más significativa para la incidencia pélvica que para las otras dos variables.
+Sin embargo, en todos los tres casos es una relación positiva. Es decir, según el modelo de estudio, un aumento de alguna de las tres variables predictoras (incidencia pélvica, radio pélvico o grado de espondilolistesis) podría provocar un aumento en el ángulo de lordosis lumbar. 
 
-Variable | Relacion
--|-
-pelvic_incidence | NO varia entre el grupo normal y la hernia, pero varia en comparación con el grupo espondilolistesis
-degree_spondylolisthesis | NO varia entre el grupo normal y la hernia, pero varia en comparación con el grupo espondilolistesis
-pelvic_radius| NO varia entre el grupo espondilolistesis y la hernia, pero varia en comparación con el grupo espondilolistesis y el grupo normal
-lumbar_lordosis_angle | Varia de forma importante entre los tres grupos.
+Estos resultados tienen sentido a nivel anatómico y nos permiten determinar que el ángulo de lordosis lumbar es una variable importante a tener en cuenta en los estudios de medida pélvica.
 
-
-Durante el analisi de cluster se realiza 2 tipos de análisis - no jerárquico utilizando valores de distancia entre puntos, y jerárquica. 
-Al realizar el test kmeans() y al evaluar la data.frame se evidencia que el numero optimo de clusters se situa entre 2 y 3, por lo que se realiza analisis para las dos situaciones, objetivando mejor calidad de aciertamiento (74%) de clusterización para la situación con 3 clusteres.
+Finalmente, durante el análisis de clúster se han realizado dos tipos de análisis (uno no jerárquico, utilizando valores de distancia entre puntos, y otro jerárquico). 
+Al realizar el test "kmeans()" y al evaluar el data-frame se evidencia que el número óptimo de clústeres se sitúa entre 2 y 3, por lo que se ha realizado un análisis para las dos situaciones, objetivando mejor la calidad de aciertamiento de clusterización (un 74%) para la situación con 3 clústeres.
 
