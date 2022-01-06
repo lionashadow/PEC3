@@ -19,7 +19,7 @@ library(factoextra)
 ```
 
 # Ejercicio 1 
-- Buscar un conjunto de datos relacionados con la Bioestadística o la Bioinformática. Posibles recursos bibliográficos son aquellos presentados en la PEC1, por ejemplo: http://www.bioinformatics.org/sms2/index.html; o bien http://biostat.mc.vanderbilt.edu/wiki/Main/DataSets. También es posible utilizar fuentes propias o de interés, siempre teniendo en cuenta que sean datos públicos para los usuarios. Será necesario especificar la procedencia y la justificación de la elección de los datos.
+- **Buscar un conjunto de datos relacionados con la Bioestadística o la Bioinformática. Posibles recursos bibliográficos son aquellos presentados en la PEC1, por ejemplo: http://www.bioinformatics.org/sms2/index.html; o bien http://biostat.mc.vanderbilt.edu/wiki/Main/DataSets. También es posible utilizar fuentes propias o de interés, siempre teniendo en cuenta que sean datos públicos para los usuarios. Será necesario especificar la procedencia y la justificación de la elección de los datos.**
 
 Para nuestro trabajo hemos elegido los datos de una base de datos pública que hemos encontrado en el sitio web kaggle.com:
 
@@ -32,7 +32,7 @@ Hemos eligido este conjunto de datos (data-set) porque:
 
 
 # Ejercicio 2
-- Utilizando R, mostrar y explicar qué tipo de ficheros se han importado, las variables de estudio (tipo, clasificación, ...), así como todo aquello relevante para el estudio. Incluir capturas de pantalla y las instrucciones en R utilizadas para importar y mostrar los datos.
+- **Utilizando R, mostrar y explicar qué tipo de ficheros se han importado, las variables de estudio (tipo, clasificación, ...), así como todo aquello relevante para el estudio. Incluir capturas de pantalla y las instrucciones en R utilizadas para importar y mostrar los datos.**
 
 Este conjunto de datos tiene 2 archivos en formato ".csv" (column_2C_weka y column_3C_weka), que se pueden unir y valorar conjuntamente.
 El data-set es una base de datos que contiene informacaión sobre 310 personas, en las que se evaluaron la posición de sus vértebras de la parte lumbar utilizando varios parámetros (véase la tabla 1 y una explicación visual del artículo 1). Dentro de esta muestra había 100 personas que consideramos "sanas" o "normales", sin patologías vertebrales o pélvicas, y 210 ("anormales") que consideramos que tenían algun tipo de patología: "hernia" o "spondilolistesis". 
@@ -56,11 +56,11 @@ class_3c, factor | Clasificación de los sujetos como "Normal", "Hernia" y "Spon
 En esta imagen presentaremos la visualización de lo ángulos medidos en la base de datos.
 ![Lumbar_angles](/Users/lionashadow/OneDrive/UOC/Software para analisys de data/PEC 3/PEC3/Image_example_angles.png)
 
-Las bibliografías utilizadas para la comprensión de estas variables se han extraído de las siguientes referencias:
+*Las bibliografías utilizadas para la comprensión de estas variables se han extraído de las siguientes referencias:*
 
-  1. Sergides IG, McCombe PF, White G, Mokhtar S, Sears WR. Lumbo-pelvic lordosis and the pelvic radius technique in the assessment of spinal sagittal balance: strengths and caveats. Eur Spine J. 2011;20 Suppl 5(Suppl 5):591-601. doi:10.1007/s00586-011-1926-z
+  *1. Sergides IG, McCombe PF, White G, Mokhtar S, Sears WR. Lumbo-pelvic lordosis and the pelvic radius technique in the assessment of spinal sagittal balance: strengths and caveats. Eur Spine J. 2011;20 Suppl 5(Suppl 5):591-601. doi:10.1007/s00586-011-1926-z*
   
-  2. https://www.orthobullets.com/spine/2071/lumbar-spine-anatomy  para la fecha de 25.12.2021
+  *2. https://www.orthobullets.com/spine/2071/lumbar-spine-anatomy  para la fecha de 25.12.2021*
 
 ```{r Preparación de la base de datos}
 # Vamos a introducir los datos en RStudio. Para esto vamos a utilizar la librería básica de R 
@@ -110,7 +110,7 @@ ortho_df3 <- ortho_df %>% filter(degree_spondylolisthesis<400) # quitamos del da
 ```
 
 # Ejercicio 3: 
-- Con la Sección 2 de la PEC1 como base, elaborar y analizar una serie de cuestiones, que ayuden a explorar y a familiarizarse mejor con los datos de estudio. Además, en algunos casos, puede utilizarse la definición de funciones y el lenguaje SQL estudiado en el LAB3.
+- **Con la Sección 2 de la PEC1 como base, elaborar y analizar una serie de cuestiones, que ayuden a explorar y a familiarizarse mejor con los datos de estudio. Además, en algunos casos, puede utilizarse la definición de funciones y el lenguaje SQL estudiado en el LAB3.**
 
 De todas las cuestiones que podemos realizar con estos datos, seleccionaremos las dos que, para nosotros, son las más destacables y extrapolables a una utilidad médica real.
 
@@ -132,29 +132,24 @@ El primer elemento de nuestros datos que analizaremos es la estadística básica
 
 Primeramente observaremos la estadística básica de cada variable mediante el comando "summary()". Éste nos muestra los valores mínimos, máximos, primer y tercer cuartil, mediana y media para cada variable. Más adelante calcularemos su desviación estándar para cada grupo. 
 
-Al ser una variable de tipo caracter, mostramos las observaciones por grupos en las variables "class_2" y "class_3" mediante la herramienta "table()".
 
 ```{r}
 summary(ortho_df)
-table(ortho_df$class_2)
-table(ortho_df$class_3)
 ```
 
 Obsérvese que podemos determinar los límites anotados para cada variable y el comportamiento general mediante la media. Estos valores nos servirán más adelante para determinar un intervalo para presentar las variables en gráficos.
 
-La variable **"pelvic_incidence"** tiene valores de 26.15º hasta 129.83º.
 
-La variable **"pelvic_tilt"** tiene valores de -6.555º hasta 49.432º.
+Variable| Características
+-|-
+**"pelvic_incidence"**| valores de 26.15º hasta 129.83º
+**"pelvic_tilt"**| valores de -6.555º hasta 49.432º
+**"lumbar_lordosis_angle"**| valores de 14º hasta 125.74º
+**"sacral_slope"** | valores de 13.37º hasta 121.43º
+**"pelvic_radius"**|valores desde 70.08º hasta 163.07º
+**"degree_spondylolisthesis"**| valores desde -11.058 mm hasta 418.543 mm
+**"class_2 y class_3"**| incluyen 210 personas en el grupo "Abnormal" (60 con hernia y 150 con espondilolistesis) y 100 personas en el grupo "Normal".
 
-La variable **"lumbar_lordosis_angle"** tiene valores de 14º hasta 125.74º.
-
-La variable **"sacral_slope"** tiene valores de 13.37º hasta 121.43º.
-
-La variable **"pelvic_radius"** tiene valores desde 70.08º hasta 163.07º.
-
-La variable **"degree_spondylolisthesis"** tiene valores desde -11.058 mm hasta 418.543 mm.
-
-Las variables **"class_2 y class_3"** incluyen 210 personas en el grupo "Abnormal" (60 con hernia y 150 con espondilolistesis) y 100 personas en el grupo "Normal".
 
 Aunque esta descripción nos sirve para acotar los valores de las variables con los que trabajamos, los datos comprenden todos grupos de estudio en conjunto. Nuestro objetivo principal es la comparación entre personas del grupo "Normal" (sin anomalías aparentes relativas a la postura pélvica y lumbar) y "Abnormal" (personas con hernia o espondilolistesis diagnosticada) para determinar si existen diferencias significativas en las variables. 
 
@@ -164,7 +159,7 @@ Hace falta remarcar que este análisis lo haríamos para las variables de tipo a
 
 Mediante la herramienta "aggregate" calculamos la media y la desviación estándar para cada grupo de nuestras variables.
 
-```{r}
+```{r Summary de las variables.}
 aggregate(ortho_df[, 1:6], list(ortho_df$class_3), mean)
 aggregate(ortho_df[, 1:6], list(ortho_df$class_3), sd)
 ```
@@ -173,7 +168,7 @@ Representaremos estos estadísticos a continuación para cada variable.
 
 **Variable 1: Incidencia pélvica (pelvic_incidence)**
 
-```{r}
+```{r gráfico de la Incidencia pélvica}
 par(mfrow=c(1,4))
 boxplot(ortho_df$pelvic_incidence[ortho_df$class_3=="Normal"],col="darkolivegreen1",main="Incidencia pélvica", xlab="Normal", ylim=c(20,130))
 boxplot(ortho_df$pelvic_incidence[ortho_df$class_2=="Abnormal"],col="Tomato",main="Incidencia pélvica", xlab="Abnormal",ylim=c(20,130))
@@ -186,7 +181,7 @@ Observamos que la media del grupo "Normal" es ligeramente inferior a la del grup
 
 **Variable 2: Inclinación pélvica (pelvic_tilt)**
 
-```{r}
+```{r gráfico Inclinación pélvica}
 par(mfrow=c(1,4))
 boxplot(ortho_df$pelvic_tilt[ortho_df$class_3=="Normal"],col="darkolivegreen1",main="Inclinación pélvica", xlab="Normal", ylim=c(-7,50))
 boxplot(ortho_df$pelvic_tilt[ortho_df$class_2=="Abnormal"],col="Tomato",main="Inclinación pélvica", xlab="Abnormal",ylim=c(-7,50))
@@ -199,7 +194,7 @@ Se observa que la media del grupo "Normal" para la inclinación pélvica es lige
 
 **Variable 3: Ángulo de lordosis lumbar (lumbar_lordosis_angle)**
 
-```{r}
+```{r gráfico Ángulo de lordosis lumbar}
 par(mfrow=c(1,4))
 boxplot(ortho_df$lumbar_lordosis_angle[ortho_df$class_3=="Normal"],col="darkolivegreen1",main="Lordosis lumbar", xlab="Normal", ylim=c(13,126))
 boxplot(ortho_df$lumbar_lordosis_angle[ortho_df$class_2=="Abnormal"],col="Tomato",main="Lordosis lumbar", xlab="Abnormal",ylim=c(13,126))
@@ -212,7 +207,7 @@ En este caso observamos que la media del grupo "Normal" es parecida a la del gru
 
 **Variable 4: Pendiente sacral (sacral_slope)**
 
-```{r}
+```{r gráfico Pendiente sacral}
 par(mfrow=c(1,4))
 boxplot(ortho_df$sacral_slope[ortho_df$class_3=="Normal"],col="darkolivegreen1",main="Pendiente sacral", xlab="Normal", ylim=c(12,122))
 boxplot(ortho_df$sacral_slope[ortho_df$class_2=="Abnormal"],col="Tomato",main="Pendiente sacral", xlab="Abnormal",ylim=c(12,122))
@@ -226,7 +221,7 @@ Existen outliers que pueden alterar la media de los datos, sobretodo en el grupo
 
 **Variable 5: Radio pélvico (pelvic_radius)**
 
-```{r}
+```{r gráfico Radio pélvico}
 par(mfrow=c(1,4))
 boxplot(ortho_df$pelvic_radius[ortho_df$class_3=="Normal"],col="darkolivegreen1",main="Radio pélvico", xlab="Normal", ylim=c(69,164))
 boxplot(ortho_df$pelvic_radius[ortho_df$class_2=="Abnormal"],col="Tomato",main="Radio pélvico", xlab="Abnormal",ylim=c(69,164))
@@ -239,7 +234,7 @@ Las medias de todos los grupos son semejantes, siendo ligeramente inferiores aqu
 
 **Variable 6: Grado de espondilolistesis (degree_spondylolisthesis)**
 
-```{r}
+```{r gráfico Grado de espondilolistesis}
 par(mfrow=c(1,4))
 boxplot(ortho_df$degree_spondylolisthesis[ortho_df$class_3=="Normal"],col="darkolivegreen1",main="G.espondilolistesis", xlab="Normal", ylim=c(-12,419))
 boxplot(ortho_df$degree_spondylolisthesis[ortho_df$class_2=="Abnormal"],col="Tomato",main="G.espondilolistesis", xlab="Abnormal",ylim=c(-12,419))
@@ -253,18 +248,18 @@ Efectivamente el grado de espondilolistesis en pacientes con espondilolistesis e
 Por otro lado, fíjese que esta variable es la única que se mide en milímetros, mostrándonos que la media de variación de la distancia entre vértebras lumbares en pacientes con espondilolistesis es de 51.89 mm. Por lo tanto, **la mayoría de pacientes con espondilolistesis del estudio tienen un grado de espondilolistesis positivo**, es decir, la vértebra desplazada tiene un desplazamiento anterior respecto su vértebra inferior en la mayoría de casos.
 
 # Ejercicio 5: 
-- Complementando el apartado anterior, elaborar un análisis de regresión de dos conjuntos de variables (LAB2 y Ejercicio 6 de la PEC1). La elección de las variables, los resultados, así como su relación deben de estar correctamente justificada.
+- **Complementando el apartado anterior, elaborar un análisis de regresión de dos conjuntos de variables (LAB2 y Ejercicio 6 de la PEC1). La elección de las variables, los resultados, así como su relación deben de estar correctamente justificada.**
 
 Para realizar la regresión lineal eligiremos las dos variables que parezcan más relacionadas de entre todas las disponibles, siempre que esa relación analizada tenga un sentido real biológico. Para ver el comportamiento que cada variable tiene con las otras variables del estudio, utilizaremos un gráfico de dispersión de pares de variables (pairs). Nótese que eliminaremos del análisis las dos variables de tipo caracter (class_2 y class_3) debido a que no son numéricas. Para analizar la relación entre variables de forma cuantitativa, calcularemos las correlaciones entre las variables numéricas mediante el comando "cor()".
 
-```{r}
+```{r Correlación entre las variables}
 pairs(ortho_df[, -c(7:8)])
 
 cor(ortho_df[, -c(7:8)])
 
 # Además, para que sea más facil interpretar las relaciones entre las variables vamos a crear una visualización de las interacciones en contexto de clasificación Normal-Anormal y Normal-Hernia-Espondilolistesis.
 
-model.matrix(~0. + pelvic_incidence+pelvic_tilt+pelvic_radius+sacral_slope+lumbar_lordosis_angle+ degree_spondylolisthesis + class_3, ortho_df) %>%
+model.matrix(~0. + pelvic_incidence+pelvic_tilt+pelvic_radius+sacral_slope+lumbar_lordosis_angle+ degree_spondylolisthesis + class_2, ortho_df) %>%
   cor() %>% 
   ggcorrplot(lab=T,
              lab_size=2.5,
@@ -294,7 +289,7 @@ De las comparaciones visuales anteriores, si nos fijamos en el gráfico de compa
 **Modelo de regresión lineal**
 Para determinar si la relación es significativa realizaremos un análisis de regresión lineal entre estas dos variables. Para ello utilizaremos un modelo de regresión lineal (lm) que denominaremos como "ortho_lm". Nosotros definiremos la incidencia pélvica como la variable independiente (explicativa) y el ángulo de lordosis lumbar como la variable dependiente (explicada), ya que el hecho de tener una incidencia pélvica más elevada podría implicar que el sacro de la persona en cuestión se inclinara hacia atrás y por lo tanto ésta tendría una modificación en su ángulo de lordosis lumbar.
 
-```{r}
+```{r Modelo de regresión lineal}
 ortho_lm <-lm(ortho_df$lumbar_lordosis_angle~ortho_df$pelvic_incidence)
 summary(ortho_lm)
 ```
@@ -304,7 +299,7 @@ Mediante el "summary" del modelo observamos distintos valores estadísticos. El 
 **Normalidad y varianza de los errores**
 Para comprobar si el coeficiente obtenido es válido, analizaremos la normalidad de los errores del modelo mediante un histograma básico, un boxplot y el gráfico de cuartiles de los residuos.
 
-```{r}
+```{r gráfico de residuos}
 residuos <-rstandard(ortho_lm)
 par(mfrow=c(1,3))
 hist(residuos, main = "Histograma de residuos")
@@ -318,7 +313,7 @@ En el primer gráfico observamos cómo, a nivel visual, los residuos parecen ten
 
 Una vez verificada la normalidad de los residuos, analizaremos si la varianza de los errores es constante. El hecho de que la varianza de los errores sea constante implicaría que la variable dependiente variaría debido a nuestra variable independiente, no debido a otros factores externos a nuestro análisis. Para ello, compararemos el gráfico de nuestro modelo con los residuos estandarizados.
 
-```{r}
+```{r gráfico fitted values}
 plot(fitted.values(ortho_lm),rstandard(ortho_lm),xlab="Valores ajustados",ylab="Residuos estandarizados", col="darkorchid3")
 abline(h=0)
 ```
@@ -330,7 +325,7 @@ Es por eso que aceptamos el modelo de regresión lineal y suponemos que el hecho
 **Modelo final y conclusiones**
 Finalmente, creemos que el modelo estudiado parece válido y que por lo tanto parece no existir una relación significativa entre las dos variables de estudio. Representaremos el modelo final en el siguiente gráfico.
 
-```{r}
+```{r gráfico abline}
 plot(ortho_df$pelvic_incidence,ortho_df$lumbar_lordosis_angle, main="Modelo de regresión lineal", xlab="Incidencia pélvica", ylab= "Ángulo de lordosis lumbar")
 abline(ortho_lm)
 ```
@@ -338,7 +333,7 @@ abline(ortho_lm)
 Como conclusión podemos decir que, como el coeficiente de determinación es relativamente elevado y el modelo de regresión es significativo, las dos variables analizadas (ángulo de lordosis lumbar e incidencia pélvica) parecen tener una relación en cuanto a su comportamiento. Esta relación es positiva (cuando el ángulo de una aumenta, el ángulo de la otra también). Este resultado es interesante, ya que ambas variables tienen el eje de medida en sitios distintos de la pelvis, a nivel anatómico. Aun así, los cambios en el comportamiento de una de las dos variables afectan a la rotación pélvica de forma que también se ocasiona cambios en el comportamiento de la otra variable.
 
 # Ejercicio 6: 
-- Realizar, a partir de los conceptos trabajados en el LAB4 y la PEC2, un estudio probabilístico (a elección propia) de al menos 3 de las variables, que ayude a esclarecer cuestiones de relevancia que se pl antean en los ámbitos de acción estudiados.
+- **Realizar, a partir de los conceptos trabajados en el LAB4 y la PEC2, un estudio probabilístico (a elección propia) de al menos 3 de las variables, que ayude a esclarecer cuestiones de relevancia que se pl antean en los ámbitos de acción estudiados.**
 
 Con el análisis del ejercicio 5 hemos podido responder parcialmente la pregunta 2 que nos proponíamos: ¿existe alguna relación entre nuestras variables de estudio?
 Mediante la regresión lineal hemos comprobado que existe una correlación positiva significativa entre el ángulo de lordosis lumbar y la incidencia pélvica. No obstante, también hemos visto unos índices de correlación elevados entre otras variables de estudio. Es por eso que ahora realizaremos una regresión múltiple para analizar qué variables tienen relación directa con otras.
@@ -346,7 +341,7 @@ Mediante la regresión lineal hemos comprobado que existe una correlación posit
 **Elección de variables**
 Para definir un modelo inicial de regresión múltiple, debemos indagar de nuevo en los coeficientes de correlación de nuestras variables, para así elegir aquellos que sean próximos a 1 o -1. Nótese que trabajaremos con el mismo método de Pearson para calcularlos.
 
-```{r}
+```{r correlación entre las variables 2}
 cor(ortho_df[, -c(7:8)])
 ```
 
@@ -364,7 +359,7 @@ En este caso, hemos elegido el ángulo de lordosis lumbar. De momento, gracias a
 **Modelo de regresión múltiple**
 Realizamos el modelo de regresión del ángulo de lordosis lumbar con las cinco variables numéricas restantes.
 
-```{r}
+```{r Modelo regresión multiple}
 ortho_modelomu<-lm(lumbar_lordosis_angle~pelvic_incidence+pelvic_tilt+sacral_slope+pelvic_radius+degree_spondylolisthesis, data=ortho_df)
 
 summary(ortho_modelomu)
@@ -376,7 +371,7 @@ Además, nos otorga el coeficiente de determinación (R-squared) del modelo, sie
 
 Ahora que sabemos nuestras variables predictoras, perfeccionaremos el modelo de regresión, eliminando las otras variables que parecen no estar relacionadas directamente con nuestra variable objetivo.
 
-```{r}
+```{r Modelo de regresión múltiple optimizado}
 ortho_modelomu2<-lm(lumbar_lordosis_angle~pelvic_incidence+pelvic_radius+degree_spondylolisthesis, data=ortho_df)
 summary(ortho_modelomu2)
 ```
@@ -388,7 +383,7 @@ A nivel anatómico estos datos tienen cierto sentido. El radio pélvico tiene su
 
 
 # Ejerecicio 7:
-- Complementando el apartado anterior, elaborar un análisis ANOVA de dos conjuntos de variables (LAB5 y Ejercicio 6 de la PEC2). La elección de las variables, los resultados, así como su relación deben de estar correctamente justificada. Además, realizar una prueba cluster de las variables, y si existe un fuerte agrupamiento, elaborar un dendograma (LAB5).
+- **Complementando el apartado anterior, elaborar un análisis ANOVA de dos conjuntos de variables (LAB5 y Ejercicio 6 de la PEC2). La elección de las variables, los resultados, así como su relación deben de estar correctamente justificada. Además, realizar una prueba cluster de las variables, y si existe un fuerte agrupamiento, elaborar un dendograma (LAB5).**
 
 Para decidir si se puede utilizar el test ANOVA, tenemos que confirmar inicialmente si las variables siguen una distribución normal además de confirmar si no son homoscedásticas (es decir, tienen la misma varianza).
 
@@ -526,7 +521,7 @@ ortho_df2 %>% ggplot(aes(y= angles, x = type_of_measure)) +
 
 ortho_df2 %>% ggplot(aes(y= angles, x = type_of_measure)) +
   geom_boxplot(alpha = 0.3, aes(fill = type_of_measure)) +
-  stat_summary(fun.y = mean, 
+  stat_summary(fun = mean, 
                geom = "point", shape = 18,
                size = 4, 
                aes(color = type_of_measure)) +
@@ -648,7 +643,7 @@ plot(TukeyHSD(anova_LLA))
 ``` 
 Los tests anteriores sugieren que la diferencia entre los valores de las medias de algunas variables difiere de forma significativa entre algunos grupos (ver conclusiones en el ejercicio 8). 
 
-
+## Análisis de clusterización
 
 ```{r Análisis de Clúster}
  #Creamos un scatter plot para evaluar la presencia de algún tipo de aglomeración.
@@ -687,7 +682,7 @@ pltree(agnes(ortho_df, method = "complete"))
 Por lo tanto, parece ser que la bondad de la realización de clústeres es superior al utilizar 3 clústeres con nuestros datos, respecto 2.
 
 # Ejercicio 8: 
-- A partir de los datos de origen y el estudio realizado (incluyendo todos los puntos anteriores), presentar un apartado de conclusiones. Esta sección debe incluir un resumen de los principales resultados obtenidos en apartados anteriores, que ayuden al lector a comprender el ámbito de estudio. Además, se valorará positivamente la coherencia de resultados y las justificaciones presentadas.
+- **A partir de los datos de origen y el estudio realizado (incluyendo todos los puntos anteriores), presentar un apartado de conclusiones. Esta sección debe incluir un resumen de los principales resultados obtenidos en apartados anteriores, que ayuden al lector a comprender el ámbito de estudio. Además, se valorará positivamente la coherencia de resultados y las justificaciones presentadas.**
 
 Mediante este estudio hemos podido resolver las dos preguntas principales hechas en el principio del trabajo.
 
